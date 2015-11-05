@@ -9,27 +9,27 @@ Homework 4 for Computer Science 327.
 
 lib/
 
-    - Shared code between all projects.
+    Shared code between all projects.
 
 sndinfo/
 
-    - Sound info generation project.
+    Sound info generation project.
 
 sndcat/
 
-    - Sound contatination project.
+    Sound contatination project.
 
 sndmix/
 
-    - Sound mixture project.
+    Sound mixture project.
 
 sndgen/
 
-    - Sound generator project.
+    Sound generator project.
 
 bin/
 
-    - Generated binaries.
+    Generated binaries.
 
 
 Each project contains their own makefile and can
