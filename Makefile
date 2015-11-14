@@ -1,33 +1,53 @@
-all: lib sndinfo sndcat sndmix sndgen
-	echo "Binaries available in bin/"
+.PHONY: all
+all: imaudio sndinfo sndcat sndmix sndgen
 
-lib:
-	make -f ./lib/Makefile
+.PHONY: install
+install: all
+	sudo cp bin/* /usr/bin/
 
+.PHONY: uinstall
+uinstall:
+	sudo rm -rf /usr/bin/sndinfo
+	sudo rm -rf /usr/bin/sndcat
+	sudo rm -rf /usr/bin/sndmix
+	sudo rm -rf /usr/bin/sndgen
+
+.PHONY: imaudio
+imaudio:
+	make -C ./imaudio/
+
+.PHONY: sndinfo
 sndinfo:
-	make -f ./sndinfo/Makefile
+	make -C ./sndinfo/
 
+.PHONY: sndcat
 sndcat:
-	make -f ./sndcat/Makefile
+	make -C ./sndcat/
 
+.PHONY: sndmix
 sndmix:
-	make -f ./sndmix/Makefile
+	make -C ./sndmix/
 
+.PHONY: sndgen
 sndgen:
-	make -f ./sndgen/Makefile
+	make -C ./sndgen/
 
+.PHONY: docs
 docs:
 	rm -rf docs/
 	doxygen .Doxyfile
 
+.PHONY: zip
 zip:
-	echo "zip"
+	# TODO
 
+.PHONY: clean
 clean:
-	echo "Cleaning All Projects"
-	make -f ./lib/Makefile clean
-	make -f ./sndinfo/Makefile clean
-	make -f ./sndcat/Makefile clean
-	make -f ./sndmix/Makefile clean
-	make -f ./sndgen/Makefile clean
+	make -C ./imaudio/ clean
+	make -C ./sndinfo/ clean
+	make -C ./sndcat/ clean
+	make -C ./sndmix/ clean
+	make -C ./sndgen/ clean
+	rm -rf bin/
+	rm -rf lib/
 	rm -rf docs/

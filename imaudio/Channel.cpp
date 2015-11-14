@@ -50,7 +50,7 @@ ostream& operator<<(ostream &os, const Channel &channel) {
 }
 
 Channel Channel::operator+(const Channel &other) {
-	// first check if we should allow Channel addition
+	// check if we should allow Channel addition
 	if (other.strict_data || strict_data) {
 		if (other.samples.size() != samples.size()) {
 			throw length_error(length_msg);
@@ -66,6 +66,24 @@ Channel Channel::operator+(const Channel &other) {
 		auto sample1 = i < (int)samples.size() ? samples[i] : 0;
 
 		last.push_sample(sample0 + sample1);
+	}
+
+	return last;
+}
+
+Channel Channel::append(const Channel &other) {
+	// check whether or now we should allow appending Channels
+	if (other.strict_data || strict_data) {
+		if (other.bit_res != bit_res) {
+			throw invalid_argument(invalid_msg);
+		}
+	}
+	
+	// all is good, append 'other' Channel to this Channel
+	Channel last = Channel(max(other.bit_res, bit_res), other.strict_data && strict_data);
+	last.samples = samples;
+	for (auto x : other.samples) {
+		last.samples.push_back(x);
 	}
 
 	return last;

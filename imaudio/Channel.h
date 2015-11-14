@@ -62,6 +62,14 @@ public:
 	Channel operator+(const Channel &other);
 
 	/**
+	 * Creates a new Channel with the sample array of 'other' appended to the end
+	 * of this Channel's sample array.
+	 * \param other The other Channel to append to this channel.
+	 * \return A new channel with the contents of 'other' appended to this channel.
+	 */
+	Channel append(const Channel &other);
+
+	/**
 	 * Attempts to push the input sample to the end of this Channels sample vector.
 	 * If the sample data will not fit in this Channel's bit resolution, this 
 	 * method will throw an overflow_error exception.
