@@ -8,8 +8,8 @@ using namespace std;
 
 /**
  * Representation of a channel. A channel requires that
- * a bit res be specified it, it will then insure that all
- * data added to it fits within the bitres.
+ * a bit resolution be specified, it will then insure that all
+ * data added to it fits within the bit resolution.
  * Internally all data is stored within a vector.
  * A channel has no knowledge of it's sample rate, and
  * therefore could not be 'played' back to the user at all.
@@ -83,6 +83,16 @@ public:
 	 */
 	inline size_t size() const {
 		return samples.size();
+	}
+
+	/**
+	 * Forwards the [] operator to the vector. Exceptions generated
+	 * by the vector's [] operator are not handled by this method.
+	 * \param Index of the sample to grab.
+	 * \returns Returns the sample at the given index.
+	 */
+	inline int& operator[](size_t n) {
+		return samples[n];
 	}
 	
 private:

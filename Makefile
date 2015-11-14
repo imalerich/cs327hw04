@@ -16,8 +16,12 @@ sndmix:
 sndgen:
 	make -f ./sndgen/Makefile
 
+docs:
+	rm -rf docs/
+	doxygen .Doxyfile
+
 zip:
-	echo "Generating .zip for submission"
+	echo "zip"
 
 clean:
 	echo "Cleaning All Projects"
@@ -26,3 +30,4 @@ clean:
 	make -f ./sndcat/Makefile clean
 	make -f ./sndmix/Makefile clean
 	make -f ./sndgen/Makefile clean
+	rm -rf docs/

@@ -4,12 +4,12 @@
 #include <string>
 #include "Channel.h"
 
-static const auto overflow_msg = "Sample exceeds this Channels bit resolution!";
-static const auto length_msg = "strict_data enabled: Channels must have the same number of samples!";
-static const auto invalid_msg = "strict_data enabled: Channels must have the same bit_res";
+static const string assign_msg = "strict_data enforced during assignment";
+static const string overflow_msg = "Sample exceeds this Channels bit resolution!";
+static const string length_msg = "strict_data enabled: Channels must have the same number of samples!";
+static const string invalid_msg = "strict_data enabled: Channels must have the same bit_res";
 
-Channel::Channel(unsigned BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} {
-}
+Channel::Channel(unsigned BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { }
 
 Channel::Channel(const Channel &other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
 	samples = other.samples;
@@ -20,11 +20,19 @@ Channel::Channel(const Channel &&other) : bit_res{other.bit_res}, strict_data{ot
 }
 
 Channel& Channel::operator=(const Channel &other) {
+	if (other.bit_res != bit_res) {
+		throw invalid_argument(assign_msg + invalid_msg);
+	}
+
 	samples = other.samples;
 	return *this;
 }
 
 Channel& Channel::operator=(const Channel &&other) {
+	if (other.bit_res != bit_res) {
+		throw invalid_argument(assign_msg + invalid_msg);
+	}
+
 	samples = std::move(other.samples);
 	return *this;
 }
@@ -57,12 +65,7 @@ Channel Channel::operator+(const Channel &other) {
 		auto sample0 = i < (int)other.samples.size() ? other.samples[i] : 0;
 		auto sample1 = i < (int)samples.size() ? samples[i] : 0;
 
-		try {
-			last.push_sample(sample0 + sample1);
-		} catch (overflow_error e) {
-			// forward any overflow_error's that occur
-			throw;
-		}
+		last.push_sample(sample0 + sample1);
 	}
 
 	return last;
