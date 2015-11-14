@@ -20,7 +20,7 @@ public:
 	 * \param BitRes Resolution (in bits) of the data stored in this channel.
 	 * \param Strict Determines whether or not to enforce strict rule swhen modifying multiple channels.
 	 */
-	Channel(unsigned BitRes, bool Strict = true);
+	Channel(size_t BitRes, bool Strict = true);
 	Channel(const Channel &other);
 	Channel(const Channel &&other);
 	Channel& operator=(const Channel &&other);
@@ -96,8 +96,8 @@ public:
 	/**
 	 * Forwards the [] operator to the vector. Exceptions generated
 	 * by the vector's [] operator are not handled by this method.
-	 * \param Index of the sample to grab.
-	 * \returns Returns the sample at the given index.
+	 * \param n Index of the sample to grab.
+	 * \return The sample at the given index.
 	 */
 	inline int& operator[](size_t n) {
 		return samples[n];
@@ -105,7 +105,7 @@ public:
 	
 private:
 	vector<int> samples; /**< The array of samples representing this channel. */
-	const unsigned bit_res; /**< Resolution (in bits) of the data for this channel. */
+	const size_t bit_res; /**< Resolution (in bits) of the data for this channel. */
 	const bool strict_data; /**< Determines whether to enforce equal channel size when adding. */
 };
 

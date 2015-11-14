@@ -9,7 +9,7 @@ static const string overflow_msg = "Sample exceeds this Channels bit resolution!
 static const string length_msg = "strict_data enabled: Channels must have the same number of samples!";
 static const string invalid_msg = "strict_data enabled: Channels must have the same bit_res";
 
-Channel::Channel(unsigned BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { }
+Channel::Channel(size_t BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { }
 
 Channel::Channel(const Channel &other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
 	samples = other.samples;
