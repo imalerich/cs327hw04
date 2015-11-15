@@ -1,10 +1,14 @@
 #ifndef I_FILE_WRITER_H
 #define I_FILE_WRITER_H
 
+#include <iostream>
 #include <string>
+
 #include "AudioFile.h"
 
 using namespace std;
+
+static const string file_write_msg = "Failed to open file for writing.";
 
 /**
  * Interface for a file writer class.

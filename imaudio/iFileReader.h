@@ -3,9 +3,12 @@
 
 #include <iostream>
 #include <string>
+
 #include "AudioFile.h"
 
 using namespace std;
+
+static const string file_read_msg = "Failed to open file for reading.";
 
 /**
  * Interface for a file reader class.
@@ -34,6 +37,6 @@ public:
 	 * \return AudioFile The AudioFile as parsed from the input stream.
 	 */
 	virtual AudioFile readFile(istream &is) = 0;
-}
+};
 
 #endif

@@ -1,13 +1,14 @@
 #include <iostream>
-#include <Channel.h>
+#include <FormatCS229.h>
+#include <string>
 
 using namespace std;
 
-int main() {
-	Channel c = Channel((size_t)8);
-	
-	for (auto i = 0; i < 100; i++)
-		c.push_sample(i);
-
-	cout << c << endl;
+int main(int argc, char ** argv) {
+	if (argc > 1) {
+		FormatCS229 format;
+		format.readFile(string(argv[1]));
+	} else {
+		cout << "please enter a valid .cs229 file as input\n";
+	}
 }

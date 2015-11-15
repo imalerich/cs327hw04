@@ -1,5 +1,5 @@
 CFLAGS = -std=c++11 -Wall -g -c -I ../imaudio/
-LFLAGS = -lm -L ../lib/
+LFLAGS = -lm -g -L ../lib/
 OBJ = main.o
 LIB = -limaudio
 
