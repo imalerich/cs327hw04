@@ -1,17 +1,6 @@
 .PHONY: all
 all: imaudio sndinfo sndcat sndmix sndgen
 
-.PHONY: install
-install: all
-	sudo cp bin/* /usr/bin/
-
-.PHONY: uinstall
-uinstall:
-	sudo rm -rf /usr/bin/sndinfo
-	sudo rm -rf /usr/bin/sndcat
-	sudo rm -rf /usr/bin/sndmix
-	sudo rm -rf /usr/bin/sndgen
-
 .PHONY: imaudio
 imaudio:
 	make -C ./imaudio/
@@ -40,6 +29,17 @@ docs:
 .PHONY: zip
 zip:
 	# TODO
+
+.PHONY: install
+install: all
+	sudo cp bin/* /usr/bin/
+
+.PHONY: uinstall
+uinstall:
+	sudo rm -rf /usr/bin/sndinfo
+	sudo rm -rf /usr/bin/sndcat
+	sudo rm -rf /usr/bin/sndmix
+	sudo rm -rf /usr/bin/sndgen
 
 .PHONY: clean
 clean:
