@@ -23,8 +23,8 @@ public:
 	Channel(size_t BitRes, bool Strict = true);
 	Channel(const Channel &other);
 	Channel(const Channel &&other);
-	Channel& operator=(const Channel &&other);
 	Channel& operator=(const Channel &other);
+	Channel& operator=(const Channel &&other);
 	friend ostream& operator<<(ostream &os, const Channel &channel);
 
 	/**

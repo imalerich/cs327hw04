@@ -16,7 +16,7 @@ Channel::Channel(const Channel &other) : bit_res{other.bit_res}, strict_data{oth
 }
 
 Channel::Channel(const Channel &&other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
-	samples = std::move(other.samples);
+	samples = move(other.samples);
 }
 
 Channel& Channel::operator=(const Channel &other) {
@@ -33,7 +33,7 @@ Channel& Channel::operator=(const Channel &&other) {
 		throw invalid_argument(assign_msg + invalid_msg);
 	}
 
-	samples = std::move(other.samples);
+	samples = move(other.samples);
 	return *this;
 }
 

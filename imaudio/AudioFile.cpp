@@ -4,6 +4,7 @@
 #include <algorithm>
 
 static const string invalid_msg = "Must have at least 1 Sample to construct an AudioFile.";
+static const string invalid_assign = "Must have matching sample_rate, bit_res, and num_channels.";
 
 AudioFile::AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict) : 
 		sample_rate{SampleRate}, bit_res{BitRes}, num_channels{NumChannels} { 
@@ -15,6 +16,37 @@ AudioFile::AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool 
 	for (auto i = 0; i < (int)num_channels; i++) {
 		channels.push_back(Channel(bit_res, Strict));
 	}
+}
+
+AudioFile::AudioFile(const AudioFile &other) :
+		sample_rate{other.sample_rate}, bit_res{other.bit_res}, num_channels{other.num_channels} { 
+	// copy all channels from 'other' to 'this'
+	channels = vector<Channel>(channels);
+}
+
+AudioFile::AudioFile(const AudioFile &&other) :
+		sample_rate{other.sample_rate}, bit_res{other.bit_res}, num_channels{other.num_channels} { 
+	channels = move(other.channels);
+}
+
+AudioFile& AudioFile::operator=(const AudioFile &other) {
+	if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
+			other.num_channels != num_channels) {
+		throw invalid_argument(invalid_assign);
+	}
+
+	channels = vector<Channel>(channels);
+	return *this;
+}
+
+AudioFile& AudioFile::operator=(const AudioFile &&other) {
+	if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
+			other.num_channels != num_channels) {
+		throw invalid_argument(invalid_assign);
+	}
+
+	channels = move(other.channels);
+	return *this;
 }
 
 bool AudioFile::are_channels_valid() {

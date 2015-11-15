@@ -29,12 +29,16 @@ public:
 	 * \param Strict Determines whether or not 'Channels' use 'strict_data'.
 	 */
 	AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict = true);
+	AudioFile(const AudioFile &other);
+	AudioFile(const AudioFile &&other);
+	AudioFile& operator=(const AudioFile &other);
+	AudioFile& operator=(const AudioFile &&other);
 
 	/**
 	 * \return Current number of channels held by this AudioFile.
 	 */
 	inline size_t get_num_channels() const {
-		return channels.size();
+		return num_channels;
 	}
 
 	/**
