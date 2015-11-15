@@ -10,7 +10,7 @@
 using namespace std;
 
 /**
- * Generic representation of an audio file.
+ * Generic representation of an audio AudioFile, independent of file format.
  * Contains any number of channels to represent
  * the audio files data, as well as the necessary data
  * for playback of those channels.
@@ -22,10 +22,11 @@ public:
 	 * sample rate, bit res, and number of channels. Each channel will have
 	 * the same bit res as this audio file. Each channel can then be accessed
 	 * using the [] operator.
+	 * If NumChannels is < 1, this function will throw an invalid_argument exception.
 	 * \param SampleRate Number of samples per second for this audio file.
 	 * \param BitRes Number of bits per byte to use for each channel.
 	 * \param NumChannels Number of 'Channels' to create.
-	 * \param Strict Determines whether or not Channels use 'strict_data'.
+	 * \param Strict Determines whether or not 'Channels' use 'strict_data'.
 	 */
 	AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict = true);
 
@@ -51,17 +52,10 @@ public:
 	}
 
 	/**
-	 * Determines the number of samples for this AudioFile, this is pulled from
-	 * the first Channel, as all channels MUST have the same number of samples.
-	 * If there are no channels in this AudioFile, an invalid_argument 
 	 * \return The number of samples for this AudioFile.
 	 */
 	inline size_t get_num_samples() const {
-		if (channels.size() > 0) {
-			throw out_of_range("Cannot determine the number of samples of with no channels.");
-		} else {
-			return channels[0].size();
-		}
+		return channels[0].size();
 	}
 
 	/**
@@ -84,11 +78,27 @@ public:
 		return channels[n];
 	}
 
+	/**
+	 * User should always check if this AudioFile's channels are valid.
+	 * To be valid, each channel must simply have the same size().
+	 * If any channel has more samples than another channels, the user
+	 * may call make_valid() to fill the smaller values with '0' values
+	 * to match the largest channel.
+	 */
+	bool are_channels_valid();
+
+	/**
+	 * If this AudioFile is valid this method does nothing.
+	 * If all channels do not have the same number of samples,
+	 * this method will add '0' values to the shorter channels.
+	 */
+	void make_valid();
+
 private:
 	const size_t sample_rate; /**< Number of samples to be played back per second. */
-	const size_t bit_res; /**< Bit resolution to use for all of this files channels. */
-	const size_t num_channels; /**< Number of channels for this audio file. */
-	vector<Channel> channels; /**< Array of this files audio channels. */
+	const size_t bit_res; /**< Bit resolution to use for all of this AudioFile's channels. */
+	const size_t num_channels; /**< Number of channels for this audio AudioFile. */
+	vector<Channel> channels; /**< Array of this AudioFile's channels. */
 };
 
 #endif
