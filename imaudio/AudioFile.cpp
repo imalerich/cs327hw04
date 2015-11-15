@@ -1,15 +1,20 @@
-#include "AudioFile.h"
-
 #include <string>
 #include <algorithm>
 
-static const string invalid_msg = "Must have at least 1 Sample to construct an AudioFile.";
+#include "AudioFile.h"
+
+static const string invalid_num_channels = "Invalid num_channels in constructor.";
+static const string invalid_bit_res = "Invalid bit_res in constructor.";
 static const string invalid_assign = "Must have matching sample_rate, bit_res, and num_channels.";
 
 AudioFile::AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict) : 
 		sample_rate{SampleRate}, bit_res{BitRes}, num_channels{NumChannels} { 
-	if (num_channels < 1) {
-		throw invalid_argument(invalid_msg);
+	if (num_channels < 1 || num_channels >= 128) {
+		throw invalid_argument(invalid_num_channels);
+	}
+
+	if (bit_res != 8 && bit_res != 16 && bit_res != 32) {
+		throw invalid_argument(invalid_bit_res);
 	}
 
 	// initalize each channel for this sound file, users of this class will not be able to replace these

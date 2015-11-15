@@ -2,14 +2,21 @@
 #include <algorithm>
 #include <stdexcept>
 #include <string>
+#include <math.h>
+
 #include "Channel.h"
 
 static const string assign_msg = "strict_data enforced during assignment";
 static const string overflow_msg = "Sample exceeds this Channels bit resolution!";
 static const string length_msg = "strict_data enabled: Channels must have the same number of samples!";
 static const string invalid_msg = "strict_data enabled: Channels must have the same bit_res";
+static const string invalid_bit_res = "Invalid bit_res in constructor.";
 
-Channel::Channel(size_t BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { }
+Channel::Channel(size_t BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { 
+	if (bit_res != 8 && bit_res != 16 && bit_res != 32) {
+		throw invalid_argument(invalid_bit_res);
+	}
+}
 
 Channel::Channel(const Channel &other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
 	samples = other.samples;
