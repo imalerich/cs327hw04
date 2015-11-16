@@ -11,17 +11,16 @@
 
 using namespace std;
 
-class FormatCS229 : iFileWriter, iFileReader {
+class CS229Reader : iFileReader {
 public:
 	// this format supports reading from a file.
 	virtual AudioFile readFile(string filename);
 	virtual AudioFile readFile(istream &is);
 
-	// This format supports writing to a file.
-	virtual void writeFile(const AudioFile &file, string filename) { }
-	virtual void writeFile(const AudioFile &file, ostream &os) { }
-
 private:
+	void check_header(istream &file);
+	void get_header_data(istream &file);
+
 	/**
 	 * The first line of data should contain a word describing the file format.
 	 * This method will check that line and validate that the file is specified to
