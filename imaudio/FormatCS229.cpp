@@ -7,6 +7,8 @@
 #include "FormatCS229.h"
 
 static const string invalid_format_msg = "Input file is not of type CS229!";
+static const string invalid_header_msg = "Invalid header 'key' or 'data'";
+static const string missing_data_msg = "Missing required header data";
 
 AudioFile FormatCS229::readFile(string filename) {
 	ifstream file(filename);
@@ -35,14 +37,15 @@ AudioFile FormatCS229::readFile(string filename) {
 		}
 	}
 
-	// print the header for debug purposes
-	for (auto &val : header) {
-		cout << val.first << ": ";
-		cout << val.second << endl;
-	}
-
 	file.close();
-	return AudioFile(60, 8, 1);
+
+	try {
+		return AudioFile(header.at("SAMPLERATE"), header.at("BITRES"), header.at("CHANNELS"));
+	} catch (out_of_range e) {
+		// only catch the exception caused by the .at()
+		// not exceptions thrown by the constructor
+		throw out_of_range(missing_data_msg);
+	}
 }
 
 AudioFile FormatCS229::readFile(istream &is) {
@@ -73,6 +76,8 @@ bool FormatCS229::proc_header_line(string line) {
 	if (is_valid_header(key) && next_index == data.size()) {
 		transform(key.begin(), key.end(), key.begin(), ::toupper);
 		header.insert({key, val});
+	} else {
+		throw invalid_argument(invalid_header_msg);
 	}
 
 	return true;

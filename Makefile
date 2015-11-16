@@ -3,23 +3,23 @@ all: imaudio sndinfo sndcat sndmix sndgen
 
 .PHONY: imaudio
 imaudio:
-	make -C ./imaudio/
+	make -C ./imaudio/ -j4
 
 .PHONY: sndinfo
-sndinfo:
-	make -C ./sndinfo/
+sndinfo: imaudio
+	make -C ./sndinfo/ -j4
 
 .PHONY: sndcat
-sndcat:
-	make -C ./sndcat/
+sndcat: imaudio
+	make -C ./sndcat/ -j4
 
 .PHONY: sndmix
-sndmix:
-	make -C ./sndmix/
+sndmix: imaudio
+	make -C ./sndmix/ -j4
 
 .PHONY: sndgen
-sndgen:
-	make -C ./sndgen/
+sndgen: imaudio
+	make -C ./sndgen/ -j4
 
 .PHONY: docs
 docs:
