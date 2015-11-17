@@ -7,9 +7,11 @@
 #include "CS229Reader.h"
 
 static const string invalid_format_msg = "Input file is not of type CS229!";
-static const string invalid_header_msg = "Invalid header 'key' or 'data'";
+static const string invalid_header_msg = "Invalid Key or Data in header.";
 static const string missing_data_msg = "Missing required header data";
 static const string missing_start_data_msg = "Input file is missing 'StartData' entry";
+static const string invalid_int = "Garbage characters found when integer expected";
+static const string invalid_num_sample = "Num samples did not match 'Samples' specified in header";
 
 AudioFile CS229Reader::readFile(string filename) {
 	ifstream file(filename);
@@ -17,37 +19,56 @@ AudioFile CS229Reader::readFile(string filename) {
 		throw invalid_argument(file_read_msg);
 	}
 	
-	AudioFile ret = readFile(file);
+	AudioFile ret = readFile(file, filename);
 	file.close();
 	return ret;
 }
 
-AudioFile CS229Reader::readFile(istream &is) {
-	check_header(is);
-	get_header_data(is);
+AudioFile CS229Reader::readFile(istream &is, string filename) {
+	try {
+		check_header(is);
+		get_header_data(is);
+	} catch (exception e) {
+		// intercept the exception for a second to print the line number
+		cerr << filename << " : exception occured at line : " << current_line << endl;
+		// forward the exception we found
+		throw;
+	}
 
 	try {
-		return AudioFile(header.at("SAMPLERATE"), header.at("BITRES"), header.at("CHANNELS"));
+		AudioFile ret = AudioFile(filename, 
+				header.at("SAMPLERATE"), header.at("BITRES"), header.at("CHANNELS"));
+		read_channel_data(ret, is);
+		return ret;
+
 	} catch (out_of_range e) {
 		// only catch the exception caused by the .at()
 		// not exceptions thrown by the constructor
 		throw out_of_range(missing_data_msg);
+	} catch (exception e) {
+		// intercept any other exception
+		cerr << filename << ": exception occured at line : " << current_line << endl;
+		// forward the exception we found
+		throw;
 	}
 }
 
-void CS229Reader::check_header(istream &file) {
+void CS229Reader::check_header(istream &stream) {
 	string line;
-	while (getline(file, line) && ignore_line(line)) { }
+	while (getline(stream, line) && ignore_line(line)) { current_line++; }
 
 	// the first valid line should be the format specifier
+	current_line++;
 	if (!check_format(line)) {
 		throw invalid_argument(invalid_format_msg);
 	}
 }
 
-void CS229Reader::get_header_data(istream &file) {
+void CS229Reader::get_header_data(istream &stream) {
 	string line;
-	while (getline(file, line)) {
+	while (getline(stream, line)) {
+		current_line++;
+
 		if (ignore_line(line)) {
 			continue;
 		}
@@ -62,9 +83,36 @@ void CS229Reader::get_header_data(istream &file) {
 	throw invalid_argument(missing_start_data_msg);
 }
 
+void CS229Reader::read_channel_data(AudioFile &file, istream &stream) {
+	string line;
+	while (getline(stream, line)) {
+		current_line++;
+
+		if (ignore_line(line)) {
+			continue;
+		}
+
+		read_samples_from_line(file, line);
+	}
+
+	try {
+		// check if the input file expected a particular number of samples
+		auto samples = header.at("SAMPLES");
+		if (file.get_num_samples() != (unsigned)samples) {
+			throw invalid_argument(invalid_num_sample);
+		}
+
+	} catch (out_of_range e) {
+		// do nothing, the input file did not specify how many samples were expected
+	}
+}
+
 bool CS229Reader::check_format(string line) {
-	// TODO
-	return true;
+	istringstream stream(line);
+	string key;
+	stream >> key;
+
+	return strcasecmp(key.c_str(), "CS229") == 0;
 }
 
 bool CS229Reader::proc_header_line(string line) {
@@ -83,14 +131,49 @@ bool CS229Reader::proc_header_line(string line) {
 	size_t next_index; // make sure this points to the end of the string
 	auto val = stoi(data, &next_index);
 
-	if (is_valid_header(key) && next_index == data.size()) {
+	if (next_index != data.length() || !data.length()) {
+		throw invalid_argument(invalid_int);
+	}
+
+	if (is_valid_header(key)) {
 		transform(key.begin(), key.end(), key.begin(), ::toupper);
 		header.insert({key, val});
 	} else {
 		throw invalid_argument(invalid_header_msg);
 	}
 
+	string extra;
+	stream >> extra;
+	if (extra.length() > 0 && extra[0] != '#') {
+		throw invalid_argument(invalid_header_msg + " -> " + extra);
+	}
+
 	return true;
+}
+
+void CS229Reader::read_samples_from_line(AudioFile &file, string line) {
+	istringstream stream(line);
+	string extra;
+	size_t next_index; // make sure this points to the end of the string
+
+	// read a sample for each channel in the AudioFile
+	for (auto i = 0; i < (int)file.get_num_channels(); i++) {
+		string data;
+		stream >> data;
+		auto val = stoi(data, &next_index);
+
+		if (next_index != data.length() || !data.length()) {
+			throw invalid_argument(invalid_int);
+		}
+
+		file[i].push_sample(val);
+	}
+
+	// make sure there isn't any extra garbage data
+	stream >> extra;
+	if (extra.length() > 0 && extra[0] != '#') {
+		throw invalid_argument(invalid_int + " -> " + extra);
+	}
 }
 
 bool CS229Reader::ignore_line(string line) {

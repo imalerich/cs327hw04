@@ -34,9 +34,10 @@ public:
 	 * by the subclass. Using that data, a new AudioFile is created, and 
 	 * then returned to the caller.
 	 * \param is Input stream to read an AudioFile from.
+	 * \param filename The name of the file we are reading from ("std::cin" by default).
 	 * \return AudioFile The AudioFile as parsed from the input stream.
 	 */
-	virtual AudioFile readFile(istream &is) = 0;
+	virtual AudioFile readFile(istream &is, string filename = "std::cin") = 0;
 };
 
 #endif

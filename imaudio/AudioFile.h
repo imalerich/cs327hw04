@@ -1,6 +1,5 @@
 #ifndef AUDIO_FILE_H
-#define AUDIO_FILE_H
-
+#define AUDIO_FILE_H 
 #include <array>
 #include <exception>
 #include <stdexcept>
@@ -23,16 +22,18 @@ public:
 	 * the same bit res as this audio file. Each channel can then be accessed
 	 * using the [] operator.
 	 * If NumChannels is < 1, this function will throw an invalid_argument exception.
+	 * \param FileName Name of the file this AudioFile was created from.
 	 * \param SampleRate Number of samples per second for this audio file.
 	 * \param BitRes Number of bits per byte to use for each channel.
 	 * \param NumChannels Number of 'Channels' to create.
 	 * \param Strict Determines whether or not 'Channels' use 'strict_data'.
 	 */
-	AudioFile(size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict = true);
+	AudioFile(string FileName, size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict = true);
 	AudioFile(const AudioFile &other);
 	AudioFile(const AudioFile &&other);
 	AudioFile& operator=(const AudioFile &other);
 	AudioFile& operator=(const AudioFile &&other);
+	friend ostream& operator<<(ostream &os, const AudioFile &file);
 
 	/**
 	 * \return Current number of channels held by this AudioFile.
@@ -71,6 +72,13 @@ public:
 	}
 
 	/**
+	 * \return The name for this AudioFile.
+	 */
+	inline string get_file_name() const {
+		return file_name;
+	}
+
+	/**
 	 * Returns a reference to the channel at the given index.
 	 * The input parameter should be within the range [0, num_channels),
 	 * this method does no additional checking from the [] operator
@@ -99,6 +107,7 @@ public:
 	void make_valid();
 
 private:
+	const string file_name; /**< Name of the file (if available) this AudioFile was created from */
 	const size_t sample_rate; /**< Number of samples to be played back per second. */
 	const size_t bit_res; /**< Bit resolution to use for all of this AudioFile's channels. */
 	const size_t num_channels; /**< Number of channels for this audio AudioFile. */
