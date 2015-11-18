@@ -129,7 +129,7 @@ bool CS229Reader::proc_header_line(string line) {
 	string data;
 	stream >> data;
 	size_t next_index; // make sure this points to the end of the string
-	auto val = stoi(data, &next_index);
+	auto val = stol(data, &next_index);
 
 	if (next_index != data.length() || !data.length()) {
 		throw invalid_argument(invalid_int);
@@ -160,7 +160,7 @@ void CS229Reader::read_samples_from_line(AudioFile &file, string line) {
 	for (auto i = 0; i < (int)file.get_num_channels(); i++) {
 		string data;
 		stream >> data;
-		auto val = stoi(data, &next_index);
+		auto val = stol(data, &next_index);
 
 		if (next_index != data.length() || !data.length()) {
 			throw invalid_argument(invalid_int);

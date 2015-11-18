@@ -28,7 +28,7 @@ public:
 	 * \param file Input file to write to a file.
 	 * \param filename Name of the file to write data to.
 	 */
-	virtual void writeFile(const AudioFile &file, string filename) = 0;
+	virtual void writeFile(AudioFile &file, string filename) = 0;
 
 	/**
 	 * This method formats the data of of the input file in the file
@@ -38,7 +38,7 @@ public:
 	 * \param file Input file to write to the output stream.
 	 * \param os Output stream to write data to.
 	 */
-	virtual void writeFile(const AudioFile &file, ostream &os) = 0;
+	virtual void writeFile(AudioFile &file, ostream &os) = 0;
 };
 
 #endif

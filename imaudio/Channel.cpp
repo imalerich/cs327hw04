@@ -31,6 +31,10 @@ Channel& Channel::operator=(const Channel &other) {
 		throw invalid_argument(assign_msg + invalid_msg);
 	}
 
+	// we need to pull constants from 'other', not use our current constants
+	*const_cast<size_t*>(&bit_res) = other.bit_res;
+	*const_cast<bool*>(&strict_data) = other.strict_data;
+
 	samples = other.samples;
 	return *this;
 }
@@ -39,6 +43,10 @@ Channel& Channel::operator=(const Channel &&other) {
 	if (other.bit_res != bit_res) {
 		throw invalid_argument(assign_msg + invalid_msg);
 	}
+
+	// we need to pull constants from 'other', not use our current constants
+	*const_cast<size_t*>(&bit_res) = other.bit_res;
+	*const_cast<bool*>(&strict_data) = other.strict_data;
 
 	samples = move(other.samples);
 	return *this;
@@ -78,15 +86,15 @@ Channel Channel::operator+(const Channel &other) {
 	return last;
 }
 
-Channel Channel::append(const Channel &other) {
-	// check whether or now we should allow appending Channels
+Channel Channel::concat(const Channel &other) {
+	// check whether or not we should allow concating Channels
 	if (other.strict_data || strict_data) {
 		if (other.bit_res != bit_res) {
 			throw invalid_argument(invalid_msg);
 		}
 	}
 	
-	// all is good, append 'other' Channel to this Channel
+	// all is good, concat 'other' Channel to this Channel
 	Channel last = Channel(max(other.bit_res, bit_res), other.strict_data && strict_data);
 	last.samples = samples;
 	for (auto x : other.samples) {
@@ -94,6 +102,20 @@ Channel Channel::append(const Channel &other) {
 	}
 
 	return last;
+}
+
+void Channel::append(const Channel &other) {
+	// check whether or not we should allow appending Channels
+	if (other.strict_data || strict_data) {
+		if (other.bit_res != bit_res) {
+			throw invalid_argument(invalid_msg);
+		}
+	}
+	
+	// all is good, concat 'other' Channel to this Channel
+	for (auto x : other.samples) {
+		samples.push_back(x);
+	}
 }
 
 Channel Channel::operator*(const double &scalar) {
@@ -122,7 +144,7 @@ Channel Channel::operator-() {
 	return other;
 }
 
-void Channel::push_sample(int sample) {
+void Channel::push_sample(long sample) {
 	// check bounds specified by the bit resolution
 	if (!is_valid_sample(sample)) {
 		throw overflow_error(overflow_msg);
@@ -132,9 +154,9 @@ void Channel::push_sample(int sample) {
 	samples.push_back(sample);
 }
 
-bool Channel::is_valid_sample(int sample) {
-	static const int max_val = pow(2, bit_res) / 2;
-	static const int min_val = -(pow(2, bit_res) / 2 - 1);
+bool Channel::is_valid_sample(long sample) {
+	static const long long max_val = pow(2, bit_res) / 2;
+	static const long long min_val = -(pow(2, bit_res) / 2 - 1);
 
 	return sample <= max_val && sample >= min_val;
 }

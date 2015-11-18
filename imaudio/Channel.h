@@ -62,21 +62,28 @@ public:
 	Channel operator+(const Channel &other);
 
 	/**
-	 * Creates a new Channel with the sample array of 'other' appended to the end
+	 * Creates a new Channel with the sample array of 'other' concated to the end
 	 * of this Channel's sample array.
-	 * \param other The other Channel to append to this channel.
-	 * \return A new channel with the contents of 'other' appended to this channel.
+	 * \param other The other Channel to concat with this channel.
+	 * \return A new channel with the contents of 'other' concated to this channel.
 	 */
-	Channel append(const Channel &other);
+	Channel concat(const Channel &other);
+
+	/**
+	 * Similar to conat(...), but does not create a new channel.
+	 * Inplace adds the concat of other to this channel.
+	 * \param other The other Channelt to append to this channel.
+	 */
+	void append(const Channel &other);
 
 	/**
 	 * Attempts to push the input sample to the end of this Channels sample vector.
 	 * If the sample data will not fit in this Channel's bit resolution, this 
 	 * method will throw an overflow_error exception.
 	 * is_valid_sample will be used to determine whether or not the sample is valid.
-	 * \param Input sample to append to the samples vector.
+	 * \param Input sample to concat to the samples vector.
 	 */
-	void push_sample(int sample);
+	void push_sample(long sample);
 
 	/**
 	 * Determines whether or not the input sample fits within
@@ -84,7 +91,7 @@ public:
 	 * \param sample A sample to be tested.
 	 * \return Whether or not the sample is valid for this Channel.
 	 */
-	bool is_valid_sample(int sample);
+	bool is_valid_sample(long sample);
 
 	/**
 	 * \returns The number of samples stored in this channel.
@@ -99,12 +106,12 @@ public:
 	 * \param n Index of the sample to grab.
 	 * \return The sample at the given index.
 	 */
-	inline int& operator[](size_t n) {
+	inline long& operator[](size_t n) {
 		return samples[n];
 	}
 	
 private:
-	vector<int> samples; /**< The array of samples representing this channel. */
+	vector<long> samples; /**< The array of samples representing this channel. */
 	const size_t bit_res; /**< Resolution (in bits) of the data for this channel. */
 	const bool strict_data; /**< Determines whether to enforce equal channel size when adding. */
 };

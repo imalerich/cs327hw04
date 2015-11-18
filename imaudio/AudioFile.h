@@ -3,8 +3,7 @@
 #include <array>
 #include <exception>
 #include <stdexcept>
-
-#include "Channel.h"
+#include "Channel.h" 
 
 using namespace std;
 
@@ -36,6 +35,19 @@ public:
 	AudioFile& operator=(const AudioFile &other);
 	AudioFile& operator=(const AudioFile &&other);
 	friend ostream& operator<<(ostream &os, const AudioFile &file);
+
+	/**
+	 * Concats the contents of each Channel to this AudioFiles channels.
+	 * If strict data is enabled:
+	 * 	Each AudioFile must have the same number of channels.
+	 * 	Each AudioFile must have the same bit res.
+	 * Else
+	 * 	Resulting AudioFile will have the larger number of channels.
+	 * 	Resulting AudioFile will have the larger bit res.
+	 * \param other AudioFile to concat to this AudioFile.
+	 * \return New AudioFile with data from both 'this' and 'other'.
+	 */
+	AudioFile concat(const AudioFile &other);
 
 	/**
 	 * \return Current number of channels held by this AudioFile.
@@ -121,6 +133,7 @@ private:
 	const size_t sample_rate; /**< Number of samples to be played back per second. */
 	const size_t bit_res; /**< Bit resolution to use for all of this AudioFile's channels. */
 	const size_t num_channels; /**< Number of channels for this audio AudioFile. */
+	const bool strict_data; /**< Whether or not strict data is enabled for this AudioFile */
 	vector<Channel> channels; /**< Array of this AudioFile's channels. */
 };
 

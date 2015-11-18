@@ -12,4 +12,4 @@ main.o: main.cpp
 
 clean:
 	rm -rf *.o
-	rm -rf ../bin/sndinfo
+	rm -rf ../bin/sndcat

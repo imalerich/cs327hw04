@@ -16,7 +16,7 @@ using namespace std;
  * File data can be reader from either an input file name,
  * or from an input stream (such as std::cin).
  */
-class CS229Reader : iFileReader {
+class CS229Reader : public iFileReader {
 public:
 	CS229Reader() : current_line{0} { }
 
