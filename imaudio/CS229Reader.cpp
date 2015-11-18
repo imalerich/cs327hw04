@@ -36,7 +36,7 @@ AudioFile CS229Reader::readFile(istream &is, string filename) {
 	}
 
 	try {
-		AudioFile ret = AudioFile(filename, 
+		AudioFile ret = AudioFile(filename, ".cs229",
 				header.at("SAMPLERATE"), header.at("BITRES"), header.at("CHANNELS"));
 		read_channel_data(ret, is);
 		return ret;

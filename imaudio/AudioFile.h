@@ -23,12 +23,14 @@ public:
 	 * using the [] operator.
 	 * If NumChannels is < 1, this function will throw an invalid_argument exception.
 	 * \param FileName Name of the file this AudioFile was created from.
+	 * \param Extension Representation of the format this file was loaded from.
 	 * \param SampleRate Number of samples per second for this audio file.
 	 * \param BitRes Number of bits per byte to use for each channel.
 	 * \param NumChannels Number of 'Channels' to create.
 	 * \param Strict Determines whether or not 'Channels' use 'strict_data'.
 	 */
-	AudioFile(string FileName, size_t SampleRate, size_t BitRes, size_t NumChannels, bool Strict = true);
+	AudioFile(string FileName, string Extension, size_t SampleRate,
+			size_t BitRes, size_t NumChannels, bool Strict = true);
 	AudioFile(const AudioFile &other);
 	AudioFile(const AudioFile &&other);
 	AudioFile& operator=(const AudioFile &other);
@@ -79,6 +81,13 @@ public:
 	}
 
 	/**
+	 * \return The format this file was created from.
+	 */
+	inline string get_extension() const {
+		return extension;
+	}
+
+	/**
 	 * Returns a reference to the channel at the given index.
 	 * The input parameter should be within the range [0, num_channels),
 	 * this method does no additional checking from the [] operator
@@ -108,6 +117,7 @@ public:
 
 private:
 	const string file_name; /**< Name of the file (if available) this AudioFile was created from */
+	const string extension; /**< File extensions this file was loaded from. */
 	const size_t sample_rate; /**< Number of samples to be played back per second. */
 	const size_t bit_res; /**< Bit resolution to use for all of this AudioFile's channels. */
 	const size_t num_channels; /**< Number of channels for this audio AudioFile. */
