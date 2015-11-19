@@ -93,7 +93,7 @@ AudioFile AudioFile::concat(const AudioFile &other) {
 		}
 
 		if (other.num_channels != num_channels) {
-			throw invalid_argument("other.num_channels must match this->bit_res");
+			throw invalid_argument("other.num_channels must match this->num_channels");
 		}
 	}
 
