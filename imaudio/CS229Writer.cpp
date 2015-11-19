@@ -31,6 +31,6 @@ void CS229Writer::writeFile(AudioFile &file, ostream &os) {
 			os << file[c][i] << " ";
 		}
 
-		cout << endl;
+		os << endl;
 	}
 }
