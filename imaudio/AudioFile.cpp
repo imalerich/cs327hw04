@@ -29,7 +29,7 @@ AudioFile::AudioFile(const AudioFile &other) :
 		file_name{other.file_name}, extension{other.extension}, sample_rate{other.sample_rate}, 
 		bit_res{other.bit_res}, num_channels{other.num_channels}, strict_data{other.strict_data} { 
 	// copy all channels from 'other' to 'this'
-	channels = vector<Channel>(channels);
+	channels = other.channels;
 }
 
 AudioFile::AudioFile(const AudioFile &&other) :
@@ -52,7 +52,7 @@ AudioFile& AudioFile::operator=(const AudioFile &other) {
 	*const_cast<size_t*>(&num_channels) = other.num_channels;
 	*const_cast<bool*>(&strict_data) = other.strict_data;
 
-	channels = vector<Channel>(channels);
+	channels = other.channels;
 	return *this;
 }
 
@@ -105,13 +105,60 @@ AudioFile AudioFile::concat(const AudioFile &other) {
 			(other.strict_data && strict_data));
 
 	// add this objects channel data first
-	for (int i = 0; i < (int)num_channels; i++) {
+	for (auto i = 0; i < (int)num_channels; i++) {
 		last[i].append(channels[i]);
 	}
 
 	// then push the other channels data
-	for (int i = 0; i < (int)other.num_channels; i++) {
+	for (auto i = 0; i < (int)other.num_channels; i++) {
 		last[i].append(other.channels[i]);
+	}
+
+	return last;
+}
+
+AudioFile AudioFile::operator*(const double scalar) {
+	AudioFile last = *this;
+	for (auto i = 0; i < (int)last.num_channels; i++) {
+		last[i] = last[i] * scalar;
+	}
+
+	return last;
+}
+
+AudioFile AudioFile::operator+(const AudioFile &other) {
+	if (other.strict_data || strict_data) {
+		if (other.bit_res != bit_res) {
+			throw invalid_argument("other.bit_res must match this->bit_res");
+		}
+
+		if (other.num_channels != num_channels) {
+			throw invalid_argument("other.num_channels must match this->num_channels");
+		}
+
+		if (other.get_num_samples() != get_num_samples()) {
+			throw invalid_argument("other.num_samples must match this->num_samples");
+		}
+	}
+
+	const AudioFile &larger = num_channels > other.num_channels ? *this : other;
+	const AudioFile &smaller = num_channels > other.num_channels ? other : *this;
+
+	AudioFile last = AudioFile(file_name + " + "  + other.file_name, 
+			extension + " + " + other.extension, larger.sample_rate, 
+			max(bit_res, other.bit_res), larger.num_channels, 
+			(other.strict_data && strict_data));
+
+	// add this objects channel data first
+	for (auto i = 0; i < (int)larger.num_channels; i++) {
+		// get_channel should use the move constructor into last[i]
+		last[i].append(larger.get_channel(i));
+	}
+
+	// add the data of the smallers channel next
+	for (auto i = 0; i < (int)smaller.num_channels; i++) {
+		// will automatically increase channel size if necessary
+		last[i] = last[i] + smaller.get_channel(i);
 	}
 
 	return last;

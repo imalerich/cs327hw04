@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include <getopt.h>
 #include <stdlib.h>
 #include <stdio.h>

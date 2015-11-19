@@ -50,6 +50,30 @@ public:
 	AudioFile concat(const AudioFile &other);
 
 	/**
+	 * Applies the input scalar across every sample
+	 * of every channel contained within this AudioFile.
+	 * The only potentional error of this method is if
+	 * the input scalar causes a sample to leave its 
+	 * appropriate bit resolution.
+	 * \param scalar Input scalar to apply to channels.
+	 * \return AudioFile representation of the result.
+	 */
+	AudioFile operator*(const double scalar);
+
+	/**
+	 * Adds each sample of this AudioFile to the 
+	 * corresponding sample in the corresponding Channel
+	 * of the other AudioFile.
+	 * The rules with regards to strict data for this method
+	 * are identical to concat, with the exception of the number
+	 * of samples. With this method, if strict data is enabled
+	 * the number of samples must match (otherwise 0's will be added).
+	 * \param other AudioFile to sum with this AudioFile.
+	 * \return AudioFile representation of the result.
+	 */
+	AudioFile operator+(const AudioFile &other);
+
+	/**
 	 * \return Current number of channels held by this AudioFile.
 	 */
 	inline size_t get_num_channels() const {
@@ -108,6 +132,16 @@ public:
 	 * \return The channel at the given index.
 	 */
 	inline Channel& operator[](size_t n) {
+		return channels[n];
+	}
+
+	/**
+	 * Similar to operator[] but returns a copy instead of
+	 * a reference, can be accessed as a constant.
+	 * \param n Index of the channel.
+	 * \return A copy of the channel at the given index.
+	 */
+	inline Channel get_channel(size_t n) const {
 		return channels[n];
 	}
 
