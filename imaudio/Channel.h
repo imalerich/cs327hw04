@@ -18,9 +18,8 @@ class Channel {
 public:
 	/**
 	 * \param BitRes Resolution (in bits) of the data stored in this channel.
-	 * \param Strict Determines whether or not to enforce strict rule swhen modifying multiple channels.
 	 */
-	Channel(size_t BitRes, bool Strict = true);
+	Channel(size_t BitRes);
 	Channel(const Channel &other);
 	Channel(const Channel &&other);
 	Channel& operator=(const Channel &other);
@@ -49,15 +48,13 @@ public:
 	 * Creates a new channel where each sample is the sum of this channels samples
 	 * and the samples of the 'other' Channel. 
 	 * If the sum of any sample exceeds the resulting bit resolution an overflow_error is thrown.
-	 * If either channel has 'strict_data' enabled the following requirements must be met:
+	 * If 'strict_data' is enabled in 'flags.h':
 	 * 	Both channels must have the same bit_resolution (invalid_argument exception).
 	 * 	Both channels must have the same size (length_error exception).
 	 * Otherwise:
 	 * 	The higher 'bit_res' will be used.
 	 * 	The larger size will be used.
 	 * 	The smaller channel will be treated as if it had 0's beyond its end.
-	 * The resulting channel will have 'strict_data' disabled ONLY if
-	 * both input Channels have 'strict_data' disabled.
 	 */
 	Channel operator+(const Channel &other);
 
@@ -113,7 +110,6 @@ public:
 private:
 	vector<long> samples; /**< The array of samples representing this channel. */
 	const size_t bit_res; /**< Resolution (in bits) of the data for this channel. */
-	const bool strict_data; /**< Determines whether to enforce equal channel size when adding. */
 };
 
 #endif

@@ -17,17 +17,23 @@ int main(int argc, char ** argv) {
 	static struct option long_options[] = {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
+		{ "nonstrict", 0, 0, 'n' },
 		{ 0, 0, 0, 0 }
 	};
 
 	char c = 0;
 	int option_index = 0;
 	const char * file_name = NULL;
-	while ((c = getopt_long(argc, argv, "ho:012", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "ho:n012", long_options, &option_index)) != -1) {
 		switch (c) {
 		case 'o':
 			file_name = optarg;
 			break;
+
+		case 'n':
+			strict_data = false;
+			break;
+
 		case 'h':
 			print_help();
 			return 0;
@@ -73,6 +79,7 @@ void print_help() {
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
 	cout << "  -o --ouput<file>\tOutput to <file> instead of standard output" << endl;
+	cout << "  -n --nonstrict\tFile combinations will be much more lenient." << endl;
 	cout << endl;
 	cout << "This program reads all sound files passed as arguments, and \"mixes\"" << endl; 
 	cout << "them into a single sound file." << endl;

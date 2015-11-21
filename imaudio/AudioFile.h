@@ -26,10 +26,9 @@ public:
 	 * \param SampleRate Number of samples per second for this audio file.
 	 * \param BitRes Number of bits per byte to use for each channel.
 	 * \param NumChannels Number of 'Channels' to create.
-	 * \param Strict Determines whether or not 'Channels' use 'strict_data'.
 	 */
 	AudioFile(string FileName, string Extension, size_t SampleRate,
-			size_t BitRes, size_t NumChannels, bool Strict = true);
+			size_t BitRes, size_t NumChannels);
 	AudioFile(const AudioFile &other);
 	AudioFile(const AudioFile &&other);
 	AudioFile& operator=(const AudioFile &other);
@@ -167,7 +166,6 @@ private:
 	const size_t sample_rate; /**< Number of samples to be played back per second. */
 	const size_t bit_res; /**< Bit resolution to use for all of this AudioFile's channels. */
 	const size_t num_channels; /**< Number of channels for this audio AudioFile. */
-	const bool strict_data; /**< Whether or not strict data is enabled for this AudioFile */
 	vector<Channel> channels; /**< Array of this AudioFile's channels. */
 };
 

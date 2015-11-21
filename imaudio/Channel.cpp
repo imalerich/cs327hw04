@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "Channel.h"
+#include "flags.h"
 
 static const string assign_msg = "strict_data enforced during assignment";
 static const string overflow_msg = "Sample exceeds this Channels bit resolution!";
@@ -12,41 +13,39 @@ static const string length_msg = "strict_data enabled: Channels must have the sa
 static const string invalid_msg = "strict_data enabled: Channels must have the same bit_res";
 static const string invalid_bit_res = "Invalid bit_res in constructor.";
 
-Channel::Channel(size_t BitRes, bool Strict) : bit_res{BitRes}, strict_data{Strict} { 
+Channel::Channel(size_t BitRes) : bit_res{BitRes} { 
 	if (bit_res != 8 && bit_res != 16 && bit_res != 32) {
 		throw invalid_argument(invalid_bit_res);
 	}
 }
 
-Channel::Channel(const Channel &other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
+Channel::Channel(const Channel &other) : bit_res{other.bit_res} {
 	samples = other.samples;
 }
 
-Channel::Channel(const Channel &&other) : bit_res{other.bit_res}, strict_data{other.strict_data} {
+Channel::Channel(const Channel &&other) : bit_res{other.bit_res} {
 	samples = move(other.samples);
 }
 
 Channel& Channel::operator=(const Channel &other) {
-	if (other.bit_res != bit_res) {
-		throw invalid_argument(assign_msg + invalid_msg);
+	if (strict_data && other.bit_res != bit_res) {
+		throw invalid_argument(assign_msg + " " + invalid_msg);
 	}
 
 	// we need to pull constants from 'other', not use our current constants
 	*const_cast<size_t*>(&bit_res) = other.bit_res;
-	*const_cast<bool*>(&strict_data) = other.strict_data;
 
 	samples = other.samples;
 	return *this;
 }
 
 Channel& Channel::operator=(const Channel &&other) {
-	if (other.bit_res != bit_res) {
-		throw invalid_argument(assign_msg + invalid_msg);
+	if (strict_data && other.bit_res != bit_res) {
+		throw invalid_argument(assign_msg + " " + invalid_msg);
 	}
 
 	// we need to pull constants from 'other', not use our current constants
 	*const_cast<size_t*>(&bit_res) = other.bit_res;
-	*const_cast<bool*>(&strict_data) = other.strict_data;
 
 	samples = move(other.samples);
 	return *this;
@@ -66,7 +65,7 @@ ostream& operator<<(ostream &os, const Channel &channel) {
 
 Channel Channel::operator+(const Channel &other) {
 	// check if we should allow Channel addition
-	if (other.strict_data || strict_data) {
+	if (strict_data) {
 		if (other.samples.size() != samples.size()) {
 			throw length_error(length_msg);
 		} else if (other.bit_res != bit_res) {
@@ -75,7 +74,7 @@ Channel Channel::operator+(const Channel &other) {
 	}
 
 	// all is good, perform the addition
-	Channel last = Channel(max(other.bit_res, bit_res), other.strict_data && strict_data);
+	Channel last = Channel(max(other.bit_res, bit_res));
 	for (auto i = 0; i < (int)max(other.samples.size(), samples.size()); i++) {
 		auto sample0 = i < (int)other.samples.size() ? other.samples[i] : 0;
 		auto sample1 = i < (int)samples.size() ? samples[i] : 0;
@@ -88,14 +87,14 @@ Channel Channel::operator+(const Channel &other) {
 
 Channel Channel::concat(const Channel &other) {
 	// check whether or not we should allow concating Channels
-	if (other.strict_data || strict_data) {
+	if (strict_data) {
 		if (other.bit_res != bit_res) {
 			throw invalid_argument(invalid_msg);
 		}
 	}
 	
 	// all is good, concat 'other' Channel to this Channel
-	Channel last = Channel(max(other.bit_res, bit_res), other.strict_data && strict_data);
+	Channel last = Channel(max(other.bit_res, bit_res));
 	last.samples = samples;
 	for (auto x : other.samples) {
 		last.samples.push_back(x);
@@ -106,7 +105,7 @@ Channel Channel::concat(const Channel &other) {
 
 void Channel::append(const Channel &other) {
 	// check whether or not we should allow appending Channels
-	if (other.strict_data || strict_data) {
+	if (strict_data) {
 		if (other.bit_res != bit_res) {
 			throw invalid_argument(invalid_msg);
 		}
@@ -155,8 +154,8 @@ void Channel::push_sample(long sample) {
 }
 
 bool Channel::is_valid_sample(long sample) {
-	static const long long max_val = pow(2, bit_res) / 2;
-	static const long long min_val = -(pow(2, bit_res) / 2 - 1);
+	const long max_val = pow(2, bit_res) / 2;
+	const long min_val = -(pow(2, bit_res) / 2 - 1);
 
 	return sample <= max_val && sample >= min_val;
 }

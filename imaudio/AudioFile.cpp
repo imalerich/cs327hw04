@@ -2,15 +2,16 @@
 #include <algorithm>
 
 #include "AudioFile.h"
+#include "flags.h"
 
 static const string invalid_num_channels = "Invalid num_channels in constructor.";
 static const string invalid_bit_res = "Invalid bit_res in constructor.";
 static const string invalid_assign = "Must have matching sample_rate, bit_res, and num_channels.";
 
 AudioFile::AudioFile(string FileName, string Extension, size_t SampleRate, 
-		size_t BitRes, size_t NumChannels, bool Strict) : 
+		size_t BitRes, size_t NumChannels) : 
 		file_name{FileName}, extension{Extension}, sample_rate{SampleRate}, 
-		bit_res{BitRes}, num_channels{NumChannels}, strict_data{Strict} { 
+		bit_res{BitRes}, num_channels{NumChannels} { 
 	if (num_channels < 1 || num_channels >= 128) {
 		throw invalid_argument(invalid_num_channels);
 	}
@@ -21,27 +22,29 @@ AudioFile::AudioFile(string FileName, string Extension, size_t SampleRate,
 
 	// initalize each channel for this sound file, users of this class will not be able to replace these
 	for (auto i = 0; i < (int)num_channels; i++) {
-		channels.push_back(Channel(bit_res, Strict));
+		channels.push_back(Channel(bit_res));
 	}
 }
 
 AudioFile::AudioFile(const AudioFile &other) :
 		file_name{other.file_name}, extension{other.extension}, sample_rate{other.sample_rate}, 
-		bit_res{other.bit_res}, num_channels{other.num_channels}, strict_data{other.strict_data} { 
+		bit_res{other.bit_res}, num_channels{other.num_channels} { 
 	// copy all channels from 'other' to 'this'
 	channels = other.channels;
 }
 
 AudioFile::AudioFile(const AudioFile &&other) :
 		file_name{other.file_name}, extension{other.extension}, sample_rate{other.sample_rate}, 
-		bit_res{other.bit_res}, num_channels{other.num_channels}, strict_data{other.strict_data} { 
+		bit_res{other.bit_res}, num_channels{other.num_channels} { 
 	channels = move(other.channels);
 }
 
 AudioFile& AudioFile::operator=(const AudioFile &other) {
-	if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
-			other.num_channels != num_channels) {
-		throw invalid_argument(invalid_assign);
+	if (strict_data) {
+		if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
+				other.num_channels != num_channels) {
+			throw invalid_argument(invalid_assign);
+		}
 	}
 
 	// we need to pull constants from 'other', not use our current constants
@@ -50,16 +53,17 @@ AudioFile& AudioFile::operator=(const AudioFile &other) {
 	*const_cast<size_t*>(&sample_rate) = other.sample_rate;
 	*const_cast<size_t*>(&bit_res) = other.bit_res;
 	*const_cast<size_t*>(&num_channels) = other.num_channels;
-	*const_cast<bool*>(&strict_data) = other.strict_data;
 
 	channels = other.channels;
 	return *this;
 }
 
 AudioFile& AudioFile::operator=(const AudioFile &&other) {
-	if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
-			other.num_channels != num_channels) {
-		throw invalid_argument(invalid_assign);
+	if (strict_data) {
+		if (other.sample_rate != sample_rate || other.bit_res != bit_res || 
+				other.num_channels != num_channels) {
+			throw invalid_argument(invalid_assign);
+		}
 	}
 
 	// we need to pull constants from 'other', not use our current constants
@@ -68,7 +72,6 @@ AudioFile& AudioFile::operator=(const AudioFile &&other) {
 	*const_cast<size_t*>(&sample_rate) = other.sample_rate;
 	*const_cast<size_t*>(&bit_res) = other.bit_res;
 	*const_cast<size_t*>(&num_channels) = other.num_channels;
-	*const_cast<bool*>(&strict_data) = other.strict_data;
 
 	channels = move(other.channels);
 	return *this;
@@ -87,7 +90,7 @@ ostream& operator<<(ostream &os, const AudioFile &file) {
 }
 
 AudioFile AudioFile::concat(const AudioFile &other) {
-	if (other.strict_data || strict_data) {
+	if (strict_data) {
 		if (other.bit_res != bit_res) {
 			throw invalid_argument("other.bit_res must match this->bit_res");
 		}
@@ -101,8 +104,7 @@ AudioFile AudioFile::concat(const AudioFile &other) {
 
 	AudioFile last = AudioFile(file_name + " + "  + other.file_name, 
 			extension + " + " + other.extension, larger.sample_rate, 
-			max(bit_res, other.bit_res), larger.num_channels, 
-			(other.strict_data && strict_data));
+			max(bit_res, other.bit_res), larger.num_channels);
 
 	// add this objects channel data first
 	for (auto i = 0; i < (int)num_channels; i++) {
@@ -127,7 +129,7 @@ AudioFile AudioFile::operator*(const double scalar) {
 }
 
 AudioFile AudioFile::operator+(const AudioFile &other) {
-	if (other.strict_data || strict_data) {
+	if (strict_data) {
 		if (other.bit_res != bit_res) {
 			throw invalid_argument("other.bit_res must match this->bit_res");
 		}
@@ -146,8 +148,7 @@ AudioFile AudioFile::operator+(const AudioFile &other) {
 
 	AudioFile last = AudioFile(file_name + " + "  + other.file_name, 
 			extension + " + " + other.extension, larger.sample_rate, 
-			max(bit_res, other.bit_res), larger.num_channels, 
-			(other.strict_data && strict_data));
+			max(bit_res, other.bit_res), larger.num_channels);
 
 	// add this objects channel data first
 	for (auto i = 0; i < (int)larger.num_channels; i++) {

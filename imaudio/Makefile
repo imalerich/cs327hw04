@@ -1,6 +1,6 @@
 CFLAGS = -std=c++11 -Wall -g -c
 LFLAGS = -g -lm
-OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o
+OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o flags.o
 
 imaudio.a: $(OBJ)
 	[ -d ../bin ] || mkdir ../lib
@@ -17,6 +17,9 @@ CS229Reader.o: CS229Reader.cpp CS229Reader.h iFileReader.h
 
 CS229Writer.o: CS229Writer.cpp CS229Writer.h iFileWriter.h
 	g++ $(CFLAGS) CS229Writer.cpp
+
+flags.o: flags.h flags.cpp
+	g++ $(CFLAGS) flags.cpp
 
 clean:
 	rm -rf *.o

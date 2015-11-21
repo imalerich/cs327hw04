@@ -7,6 +7,7 @@
 #include <CS229Reader.h>
 #include <CS229Writer.h>
 #include <AudioFile.h>
+#include <flags.h>
 
 using namespace std;
 void print_help();
@@ -16,16 +17,21 @@ int main(int argc, char ** argv) {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
 		{ "wav", 0, 0, 'w' },
+		{ "nonstrict", 0, 0, 'n' },
 		{ 0, 0, 0, 0 }
 	};
 
 	char c = 0;
 	int option_index = 0;
 	const char * file_name = NULL;
-	while ((c = getopt_long(argc, argv, "hwo:012", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "hwo:n012", long_options, &option_index)) != -1) {
 		switch (c) {
 		case 'o':
 			file_name = optarg;
+			break;
+
+		case 'n':
+			strict_data = false;
 			break;
 
 		case 'w':
@@ -63,6 +69,7 @@ void print_help() {
 	cout << "  -h --help\tDisplay this information" << endl;
 	cout << "  -o --output<file>\tOutput to <file> instead of the standard output" << endl;
 	cout << "  -w --wav\tInput files are in .wav format not .cs229" << endl;
+	cout << "  -n --nonstrict\tFile combinations will be much more lenient." << endl;
 	cout << endl;
 	cout << "This program reads all sound files passed as arguments, and writes a single sound file that is" << endl;
 	cout << "the concatenation of the inputs. If no files are passed as arguments, then the program should" << endl;
