@@ -1,6 +1,7 @@
 CFLAGS = -std=c++11 -Wall -g -c
 LFLAGS = -g -lm
-OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o flags.o
+OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o SinWave.o TriangleWave.o SawToothWave.o PulseWave.o AdsrEnvelope.o flags.o
+FUNC = func/iWaveform.h func/iFunction.h
 
 imaudio.a: $(OBJ)
 	[ -d ../bin ] || mkdir ../lib
@@ -17,6 +18,21 @@ CS229Reader.o: CS229Reader.cpp CS229Reader.h iFileReader.h
 
 CS229Writer.o: CS229Writer.cpp CS229Writer.h iFileWriter.h
 	g++ $(CFLAGS) CS229Writer.cpp
+
+SinWave.o: func/SinWave.cpp func/SinWave.h $(FUNC)
+	g++ $(CFLAGS) func/SinWave.cpp
+
+TriangleWave.o: func/TriangleWave.cpp func/TriangleWave.h $(FUNC)
+	g++ $(CFLAGS) func/TriangleWave.cpp
+
+SawToothWave.o: func/SawToothWave.cpp func/SawToothWave.h $(FUNC)
+	g++ $(CFLAGS) func/SawToothWave.cpp
+
+PulseWave.o: func/PulseWave.cpp func/PulseWave.h $(FUNC)
+	g++ $(CFLAGS) func/PulseWave.cpp
+
+AdsrEnvelope.o: func/AdsrEnvelope.cpp func/AdsrEnvelope.h func/iFunction.h
+	g++ $(CFLAGS) func/AdsrEnvelope.cpp
 
 flags.o: flags.h flags.cpp
 	g++ $(CFLAGS) flags.cpp

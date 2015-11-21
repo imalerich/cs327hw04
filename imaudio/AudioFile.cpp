@@ -165,6 +165,43 @@ AudioFile AudioFile::operator+(const AudioFile &other) {
 	return last;
 }
 
+AudioFile AudioFile::operator*(const AudioFile &other) {
+	if (strict_data) {
+		if (other.bit_res != bit_res) {
+			throw invalid_argument("other.bit_res must match this->bit_res");
+		}
+
+		if (other.num_channels != num_channels) {
+			throw invalid_argument("other.num_channels must match this->num_channels");
+		}
+
+		if (other.get_num_samples() != get_num_samples()) {
+			throw invalid_argument("other.num_samples must match this->num_samples");
+		}
+	}
+
+	const AudioFile &larger = num_channels > other.num_channels ? *this : other;
+	const AudioFile &smaller = num_channels > other.num_channels ? other : *this;
+
+	AudioFile last = AudioFile(file_name + " + "  + other.file_name, 
+			extension + " + " + other.extension, larger.sample_rate, 
+			max(bit_res, other.bit_res), larger.num_channels);
+
+	// add this objects channel data first
+	for (auto i = 0; i < (int)larger.num_channels; i++) {
+		// get_channel should use the move constructor into last[i]
+		last[i].append(larger.get_channel(i));
+	}
+
+	// add the data of the smallers channel next
+	for (auto i = 0; i < (int)smaller.num_channels; i++) {
+		// will automatically increase channel size if necessary
+		last[i] = last[i] * smaller.get_channel(i);
+	}
+
+	return last;
+}
+
 bool AudioFile::are_channels_valid() {
 	auto num_channels = get_num_channels();
 	for (auto &channel : channels) {

@@ -9,6 +9,11 @@
 #include <CS229Reader.h>
 #include <CS229Writer.h>
 #include <AudioFile.h>
+#include <func/SinWave.h>
+#include <func/TriangleWave.h>
+#include <func/SawToothWave.h>
+#include <func/PulseWave.h>
+#include <func/AdsrEnvelope.h>
 #include <flags.h>
 
 using namespace std;
@@ -118,14 +123,16 @@ int main(int argc, char ** argv) {
 			return 0;
 		}
 	}
+		
+	// check for unwated parameters
+	if (argc - optind > 0 || argc == 1) {
+		print_help();
+		return 1;
+	}
 
 	// validate the state of the program
 	if (!bit_res || !sample_rate) {
 		throw invalid_argument("non-zero bit_res and sample_rate are required to create a new file.");
-	}
-
-	if (sin + triangle + sawtooth + pulse != 1) {
-		throw invalid_argument("sndgen requires one of the following arguments is allowed: '--sin' '--triangle' '--sawtooth' '--pulse'");
 	}
 
 	if (volume < 0.0 || volume > 1.0) {
@@ -146,21 +153,47 @@ int main(int argc, char ** argv) {
 			throw invalid_argument("sustain time of adsr envelope (option -s) must be within the range [0.0, 1.0]");
 		}
 	}
-		
-	// check for unwated parameters
-	if (argc - optind > 0) {
-		print_help();
-		return 1;
+
+	iWaveform * wave = NULL;
+	switch (sin * 1000 + triangle * 100 + sawtooth * 10 + pulse * 1) {
+	case 1000:
+		wave = new SinWave(100, frequency);
+		break;
+
+	case 100:
+		wave = new TriangleWave(100, frequency);
+		break;
+
+	case 10:
+		wave = new SawToothWave(100, frequency);
+		break;
+
+	case 1:
+		wave = new PulseWave(100, frequency, pulse_ratio);
+		break;
+
+	default:
+		throw invalid_argument("sndgen requires one of the following arguments is allowed: '--sin' '--triangle' '--sawtooth' '--pulse'");
+		break;
 	}
 
 	// generate the file and output
-	if (file_name) {
-		AudioFile output = AudioFile(file_name, ".cs229", sample_rate, bit_res, 1);
-		CS229Writer().writeFile(output, file_name);
-	} else {
-		AudioFile output = AudioFile("std::cout", ".cs229", sample_rate, bit_res, 1);
-		CS229Writer().writeFile(output, cout);
+	AudioFile file = ((iFunction *)wave)->generateAudioFile(sample_rate, time_duration, bit_res);
+
+	if (use_adsr) {
+		AdsrEnvelope adsr = AdsrEnvelope(a, d, s, r, time_duration);
+		AudioFile adsr_file = ((iFunction *)&adsr)->generateAudioFile(sample_rate, time_duration, bit_res);
+		file = file * adsr_file;
 	}
+
+	if (file_name) {
+		CS229Writer().writeFile(file, file_name);
+	} else {
+		CS229Writer().writeFile(file, cout);
+	}
+	
+	// wave is only NULL if the default: exception is thrown
+	delete wave;
 }
 
 void print_help() {

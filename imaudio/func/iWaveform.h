@@ -1,5 +1,5 @@
 #ifndef IWAVEFORM_H
-#define IWAVEFORM_h
+#define IWAVEFORM_H
 
 #include "iFunction.h"
 
@@ -19,9 +19,12 @@ public:
 	 */
 	iWaveform(double Amplitude, double Frequency) {
 		amplitude = Amplitude;
-		frequency = Frequncy;
+		frequency = Frequency;
 	}
 
+	virtual ~iWaveform() { }
+
+protected:
 	/**
 	 * The amplitude of the waveform. This value is half the total height 
 	 * of the wave, or alternatively the max value of the function assuming

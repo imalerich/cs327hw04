@@ -73,6 +73,17 @@ public:
 	AudioFile operator+(const AudioFile &other);
 
 	/**
+	 * Multiplies each sample of this AudioFile with
+	 * the corresponding sample in the corresponding Channel
+	 * of the other AudioFile.
+	 * The rules with regards to strict data for this method
+	 * are identical to operator+(const AudioFile &other).
+	 * \param other AudioFile to multiplyl with this AudioFile.
+	 * \return AudioFile representation of the result.
+	 */
+	AudioFile operator*(const AudioFile &other);
+
+	/**
 	 * \return Current number of channels held by this AudioFile.
 	 */
 	inline size_t get_num_channels() const {

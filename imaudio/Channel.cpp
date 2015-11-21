@@ -85,6 +85,28 @@ Channel Channel::operator+(const Channel &other) {
 	return last;
 }
 
+Channel Channel::operator*(const Channel &other) {
+	// check if we should allow Channel addition
+	if (strict_data) {
+		if (other.samples.size() != samples.size()) {
+			throw length_error(length_msg);
+		} else if (other.bit_res != bit_res) {
+			throw invalid_argument(invalid_msg);
+		}
+	}
+
+	// all is good, perform the addition
+	Channel last = Channel(max(other.bit_res, bit_res));
+	for (auto i = 0; i < (int)max(other.samples.size(), samples.size()); i++) {
+		auto sample0 = i < (int)other.samples.size() ? other.samples[i] : 1;
+		auto sample1 = i < (int)samples.size() ? samples[i] : 1;
+
+		last.push_sample(sample0 * sample1);
+	}
+
+	return last;
+}
+
 Channel Channel::concat(const Channel &other) {
 	// check whether or not we should allow concating Channels
 	if (strict_data) {

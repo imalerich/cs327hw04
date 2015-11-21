@@ -57,6 +57,21 @@ public:
 	 * 	The smaller channel will be treated as if it had 0's beyond its end.
 	 */
 	Channel operator+(const Channel &other);
+	
+	/**
+	 * Creates a new channel where each sample is multiplied by the corresponding
+	 * sample in the 'other' CHannel.
+	 * If the sumer of any sample exceed the resulting bit resolution an 
+	 * overflow_error is thrown.
+	 * If 'strict_data' is enabled in 'flags.h':
+	 * 	Both channels must have the same bit_resolution (invalid_argument exception).
+	 * 	Both channels must have the same size (length_error exception).
+	 * Otherwise:
+	 * 	The higher 'bit_res' will be used.
+	 * 	The larger size will be used.
+	 * 	The smaller channel will be treated as if it had 1's beyond its end.
+	 */
+	Channel operator*(const Channel &other);
 
 	/**
 	 * Creates a new Channel with the sample array of 'other' concated to the end

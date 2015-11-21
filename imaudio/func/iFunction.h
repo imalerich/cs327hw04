@@ -1,8 +1,8 @@
 #ifndef IFUNCTION_H
 #define IFUNCTION_H
 
-#include "AudioFile.h"
-#include "flags.h"
+#include "../AudioFile.h"
+#include "../flags.h"
 
 /**
  * Base interface for use in sound generation.
@@ -16,6 +16,7 @@
  */
 class iFunction {
 public:
+	virtual ~iFunction() { }
 	/**
 	 * Returns the output of this function at the given input time.
 	 * \param time Input time to grab a sample from.
@@ -36,10 +37,11 @@ public:
 	 * sampleAtTime(...) for parameter in increments of 1.0 / SampleRate.
 	 * \param SampleRate Number of samples per second to take of this function.
 	 * \param Length Length (in seconds) of the output AudioFile.
+	 * \param BitRes Bit resolution to use in the generated AudioFile.
 	 * \return Discrete AudioFile representing this function.
 	 */
-	AudioFile generateAudioFile(size_t SampleRate, double Length) {
-		AudioFile f = AudioFile(functionName(), "iFunction", SampleRate, MIN_BIT_RES, 1);
+	AudioFile generateAudioFile(size_t SampleRate, double Length, size_t BitRes) {
+		AudioFile f = AudioFile(functionName(), "iFunction", SampleRate, BitRes, 1);
 		auto sample_count = Length * SampleRate;
 
 		for (auto i = 0; i < sample_count; i++) {
@@ -51,6 +53,6 @@ public:
 	}
 
 private:
-}
+};
 
 #endif
