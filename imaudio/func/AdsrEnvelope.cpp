@@ -1,7 +1,7 @@
 #include <math.h>
 #include "AdsrEnvelope.h"
 
-AdsrEnvelope::AdsrEnvelope(double Attack, double Decay, double Release, double Sustain, double Length) {
+AdsrEnvelope::AdsrEnvelope(double Attack, double Decay, double Sustain, double Release, double Length) {
 	a = Attack;
 	d = Decay;
 	s = Sustain;
@@ -18,19 +18,23 @@ long AdsrEnvelope::sampleAtTime(double time) {
 		return (1.0 / a) * time;
 	}
 
-	if (time < d) {
-		auto slope = (1.0 - s) / (d - a);
+	if (time < a + d) {
+		auto slope = (1.0 - s) / d;
 		auto t = (time - a);
 		return 1.0 - (slope * t);
 	}
 
-	if (time < r) {
+	cerr << "time: " << time << endl;
+	cerr << "length: " << length << endl;
+	cerr << "r: " << r << endl;
+	cerr << "s: " << s << endl;
+	if (time < length - r) {
 		return s;
 	}
 
 	if (time < length) {
 		auto slope = s / r;
-		auto t = time - 4;
+		auto t = time - r;
 		return s - (slope * t);
 	}
 
