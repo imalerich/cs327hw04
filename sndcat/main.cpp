@@ -67,7 +67,7 @@ void print_help() {
 	cout << "Usage: sndcat [options] file..." << endl;
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
-	cout << "  -o --output<file>\tOutput to <file> instead of the standard output" << endl;
+	cout << "  -o --output=<file>\tOutput to <file> instead of the standard output" << endl;
 	cout << "  -w --wav\tInput files are in .wav format not .cs229" << endl;
 	cout << "  -n --nonstrict\tFile combinations will be much more lenient." << endl;
 	cout << endl;

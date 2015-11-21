@@ -8,6 +8,7 @@
 #include <CS229Reader.h>
 #include <CS229Writer.h>
 #include <AudioFile.h>
+#include <flags.h>
 
 using namespace std;
 double get_scalar(char * str);
@@ -78,7 +79,7 @@ void print_help() {
 	cout << "Usage: sndmix [options] file mult..." << endl;
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
-	cout << "  -o --ouput<file>\tOutput to <file> instead of standard output" << endl;
+	cout << "  -o --ouput=<file>\tOutput to <file> instead of standard output" << endl;
 	cout << "  -n --nonstrict\tFile combinations will be much more lenient." << endl;
 	cout << endl;
 	cout << "This program reads all sound files passed as arguments, and \"mixes\"" << endl; 
