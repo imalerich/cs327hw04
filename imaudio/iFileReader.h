@@ -27,7 +27,16 @@ public:
 	 * \param filename Input filename to read an AudioFile from.
 	 * \return AudioFile The AudioFile as parsed from the input file.
 	 */
-	virtual AudioFile readFile(string filename) = 0;
+	AudioFile readFile(string filename) {
+		ifstream file(filename);
+		if (!file.is_open()) {
+			throw invalid_argument(file_read_msg);
+		}
+	
+		AudioFile ret = readFile(file, filename);
+		file.close();
+		return ret;
+	}
 
 	/**
 	 * This method reads bytes from an input stream in the file format defined

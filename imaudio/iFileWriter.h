@@ -28,7 +28,13 @@ public:
 	 * \param file Input file to write to a file.
 	 * \param filename Name of the file to write data to.
 	 */
-	virtual void writeFile(AudioFile &file, string filename) = 0;
+	void writeFile(AudioFile &file, string filename) {
+		// create the file, then redirect to writeFile
+		ofstream output;
+		output.open(filename);
+		writeFile(file, output);
+		output.close();
+	}
 
 	/**
 	 * This method formats the data of of the input file in the file

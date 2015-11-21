@@ -13,17 +13,6 @@ static const string missing_start_data_msg = "Input file is missing 'StartData' 
 static const string invalid_int = "Garbage characters found when integer expected";
 static const string invalid_num_sample = "Num samples did not match 'Samples' specified in header";
 
-AudioFile CS229Reader::readFile(string filename) {
-	ifstream file(filename);
-	if (!file.is_open()) {
-		throw invalid_argument(file_read_msg);
-	}
-	
-	AudioFile ret = readFile(file, filename);
-	file.close();
-	return ret;
-}
-
 AudioFile CS229Reader::readFile(istream &is, string filename) {
 	try {
 		check_header(is);

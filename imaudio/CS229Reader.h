@@ -20,7 +20,7 @@ class CS229Reader : public iFileReader {
 public:
 	CS229Reader() : current_line{0} { }
 
-	virtual AudioFile readFile(string filename);
+	AudioFile readFile(string filename) { return iFileReader::readFile(filename); }
 	virtual AudioFile readFile(istream &is, string filename = "std::cin");
 
 private:

@@ -3,14 +3,6 @@
 
 #include "CS229Writer.h"
 
-void CS229Writer::writeFile(AudioFile &file, string filename) {
-	// create the file, then redirect to writeFile
-	ofstream output;
-	output.open(filename);
-	writeFile(file, output);
-	output.close();
-}
-
 void CS229Writer::writeFile(AudioFile &file, ostream &os) {
 	// print out the header
 	os << "CS229" << endl;
