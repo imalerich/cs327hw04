@@ -7,7 +7,7 @@ class SawToothWave : public iWaveform {
 public:
 	SawToothWave(double Amplitude, double Frequency) : iWaveform(Amplitude, Frequency) { }
 
-	virtual long sampleAtTime(double time);
+	virtual double sampleAtTime(double time);
 
 	inline virtual string functionName() {
 		return "sawtoothwave";

@@ -15,7 +15,7 @@ public:
 	 */
 	AdsrEnvelope(double Attack, double Decay, double Sustain, double Release, double Length);
 
-	virtual long sampleAtTime(double time);
+	virtual double sampleAtTime(double time);
 
 	/**
 	 * \return The current length (in seconds) of this adsr envelope.

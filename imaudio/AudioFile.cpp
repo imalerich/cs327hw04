@@ -1,6 +1,5 @@
 #include <string>
-#include <algorithm>
-
+#include <algorithm> 
 #include "AudioFile.h"
 #include "flags.h"
 

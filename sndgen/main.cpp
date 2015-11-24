@@ -182,8 +182,7 @@ int main(int argc, char ** argv) {
 
 	if (use_adsr) {
 		AdsrEnvelope adsr = AdsrEnvelope(a, d, s, r, time_duration);
-		AudioFile adsr_file = ((iFunction *)&adsr)->generateAudioFile(sample_rate, time_duration, bit_res);
-		file = file * adsr_file;
+		file = adsr * file;
 	}
 
 	if (file_name) {

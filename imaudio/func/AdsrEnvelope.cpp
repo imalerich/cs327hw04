@@ -9,7 +9,7 @@ AdsrEnvelope::AdsrEnvelope(double Attack, double Decay, double Sustain, double R
 	length = Length;
 }
 
-long AdsrEnvelope::sampleAtTime(double time) {
+double AdsrEnvelope::sampleAtTime(double time) {
 	if (time < 0.0) {
 		return 0.0;
 	}

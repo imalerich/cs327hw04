@@ -1,7 +1,7 @@
 #include <math.h>
 #include "PulseWave.h"
 
-long PulseWave::sampleAtTime(double time) {
+double PulseWave::sampleAtTime(double time) {
 	time = time * iWaveform::frequency; // adjust time to frequency
 	time = time - (int)time; // remap to range [0, 1)
 	

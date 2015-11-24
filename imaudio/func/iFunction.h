@@ -22,7 +22,7 @@ public:
 	 * \param time Input time to grab a sample from.
 	 * \return The sample value at the given time.
 	 */
-	virtual long sampleAtTime(double time) = 0;
+	virtual double sampleAtTime(double time) = 0;
 
 	/**
 	 * The name of this function to use for the generated audio file.
@@ -50,6 +50,30 @@ public:
 		}
 
 		return f;
+	}
+
+	/**
+	 * Multiplies the values of this continuous function with 
+	 * the corresponding samples in the input AudioFile.
+	 * The multiplication will be performed across all channels.
+	 * \param file File whos samples will be multiplied by this function to generate the result.
+	 * \return AudioFile representation of the result.
+	 */
+	AudioFile operator*(const AudioFile file) {
+		AudioFile last = file;
+
+		// go through each channel in this AudioFile
+		for (auto c = 0; c < (int)last.get_num_channels(); c++) {
+			Channel &channel = last[c];
+
+			// multiply each sample by the func at the given time
+			for (auto i = 0; i < (int)channel.size(); i++) {
+				auto time = i / (double)last.get_sample_rate();
+				channel[i] *= sampleAtTime(time);
+			}
+		}
+
+		return last;
 	}
 
 private:

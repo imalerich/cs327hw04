@@ -1,8 +1,10 @@
 #ifndef AUDIO_FILE_H
 #define AUDIO_FILE_H 
+
 #include <array>
 #include <exception>
 #include <stdexcept>
+
 #include "Channel.h" 
 
 using namespace std;
@@ -78,7 +80,7 @@ public:
 	 * of the other AudioFile.
 	 * The rules with regards to strict data for this method
 	 * are identical to operator+(const AudioFile &other).
-	 * \param other AudioFile to multiplyl with this AudioFile.
+	 * \param other AudioFile to multiply with this AudioFile.
 	 * \return AudioFile representation of the result.
 	 */
 	AudioFile operator*(const AudioFile &other);

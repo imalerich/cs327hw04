@@ -7,7 +7,7 @@ class SinWave : public iWaveform {
 public:
 	SinWave(double Amplitude, double Frequency) : iWaveform(Amplitude, Frequency) { }
 
-	virtual long sampleAtTime(double time);
+	virtual double sampleAtTime(double time);
 
 	inline virtual string functionName() {
 		return "sinwave";
