@@ -28,8 +28,11 @@ docs:
 
 .PHONY: zip
 zip: clean docs
-	zip -r immhw04 README.md Makefile sndinfo/ sndcat sndmix/ sndgen/ docs/
-	# TODO
+	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ docs/
+
+.PHONY: zip-nodoc
+zip-nodoc: clean
+	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/
 
 .PHONY: install
 install: all
