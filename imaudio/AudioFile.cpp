@@ -212,6 +212,8 @@ AudioFile AudioFile::operator*(const AudioFile &other) {
 		last[i] = last[i] * smaller.get_channel(i);
 	}
 
+	last.make_valid();
+
 	return last;
 }
 
