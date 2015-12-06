@@ -97,6 +97,10 @@ AudioFile AudioFile::concat(const AudioFile &other) {
 		if (other.num_channels != num_channels) {
 			throw invalid_argument("other.num_channels must match this->num_channels");
 		}
+
+		if (other.sample_rate != sample_rate) {
+			throw invalid_argument("other.sample_rate must ALWAYS match this->sample_rate");
+		}
 	}
 
 	const AudioFile &larger = num_channels > other.num_channels ? *this : other;
@@ -114,6 +118,8 @@ AudioFile AudioFile::concat(const AudioFile &other) {
 	for (auto i = 0; i < (int)other.num_channels; i++) {
 		last[i].append(other.channels[i]);
 	}
+
+	last.make_valid();
 
 	return last;
 }
@@ -139,6 +145,10 @@ AudioFile AudioFile::operator+(const AudioFile &other) {
 
 		if (other.get_num_samples() != get_num_samples()) {
 			throw invalid_argument("other.num_samples must match this->num_samples");
+		}
+
+		if (other.sample_rate != sample_rate) {
+			throw invalid_argument("other.sample_rate must ALWAYS match this->sample_rate");
 		}
 	}
 
@@ -176,6 +186,10 @@ AudioFile AudioFile::operator*(const AudioFile &other) {
 
 		if (other.get_num_samples() != get_num_samples()) {
 			throw invalid_argument("other.num_samples must match this->num_samples");
+		}
+
+		if (other.sample_rate != sample_rate) {
+			throw invalid_argument("other.sample_rate must ALWAYS match this->sample_rate");
 		}
 	}
 
