@@ -27,7 +27,8 @@ docs:
 	doxygen .Doxyfile
 
 .PHONY: zip
-zip:
+zip: clean docs
+	zip -r immhw04 README.md Makefile sndinfo/ sndcat sndmix/ sndgen/ docs/
 	# TODO
 
 .PHONY: install
