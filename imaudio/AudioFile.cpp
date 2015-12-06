@@ -83,7 +83,7 @@ ostream& operator<<(ostream &os, const AudioFile &file) {
 	os << "Bit Depth:\t" << file.bit_res << endl;
 	os << "Num Channels:\t" << file.num_channels << endl;
 	os << "Num Samples:\t" << file.get_num_samples() << endl;
-	os << "Length:\t\t" << (file.get_num_samples() / file.sample_rate) << endl;
+	os << "Length:\t\t" << file.get_num_samples() / (double)file.sample_rate << " seconds" << endl;
 
 	return os;
 }
