@@ -24,10 +24,6 @@ double AdsrEnvelope::sampleAtTime(double time) {
 		return 1.0 - (slope * t);
 	}
 
-	cerr << "time: " << time << endl;
-	cerr << "length: " << length << endl;
-	cerr << "r: " << r << endl;
-	cerr << "s: " << s << endl;
 	if (time < length - r) {
 		return s;
 	}

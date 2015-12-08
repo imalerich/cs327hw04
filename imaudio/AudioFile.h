@@ -86,6 +86,13 @@ public:
 	AudioFile operator*(const AudioFile &other);
 
 	/**
+	 * Takes very sample of the channel at the input index and replaces
+	 * the value with '0'.
+	 * \param index Index of the channel to mute.
+	 */
+	void mute_channel(unsigned index);
+
+	/**
 	 * \return Current number of channels held by this AudioFile.
 	 */
 	inline size_t get_num_channels() const {

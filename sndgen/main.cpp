@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include <string>
 #include <sstream>
 
@@ -22,7 +23,7 @@ void print_help();
 double get_double_from_string(string data);
 long get_long_from_string(string data);
 
-static int sin;
+static int sine;
 static int triangle;
 static int sawtooth;
 static int pulse;
@@ -48,7 +49,7 @@ int main(int argc, char ** argv) {
 		{ "nonstrict",	no_argument,		0,			'n' },
 		{ "bits",		required_argument,	0,			0 },
 	 	{ "sr",			required_argument,	0,			0 },
-		{ "sin",		no_argument,		&sin,		1 },
+		{ "sine",		no_argument,		&sine,		1 },
 		{ "triangle",	no_argument,		&triangle,	1 },
 		{ "sawtooth",	no_argument,		&sawtooth,	1 },
 		{ "pulse",		no_argument,		&pulse,		1 },
@@ -146,7 +147,7 @@ int main(int argc, char ** argv) {
 	// check if we are going to use an adsr envelope
 	if (use_adsr) {
 		if (a < 0 || d < 0 || s < 0 || r < 0) {
-			throw invalid_argument("if using an adsr envelope all options ('-a -d -s -r) must be specified");
+			throw invalid_argument("if usineg an adsr envelope all options ('-a -d -s -r) must be specified");
 		}
 
 		if (s < 0 || s > 1.0) {
@@ -154,31 +155,33 @@ int main(int argc, char ** argv) {
 		}
 	}
 
+	double amplitude = ((int)pow(2, bit_res) / 2.0) - 1;
 	iWaveform * wave = NULL;
-	switch (sin * 1000 + triangle * 100 + sawtooth * 10 + pulse * 1) {
+	switch (sine * 1000 + triangle * 100 + sawtooth * 10 + pulse * 1) {
 	case 1000:
-		wave = new SinWave(100, frequency);
+		wave = new SinWave(amplitude, frequency);
 		break;
 
 	case 100:
-		wave = new TriangleWave(100, frequency);
+		wave = new TriangleWave(amplitude, frequency);
 		break;
 
 	case 10:
-		wave = new SawToothWave(100, frequency);
+		wave = new SawToothWave(amplitude, frequency);
 		break;
 
 	case 1:
-		wave = new PulseWave(100, frequency, pulse_ratio);
+		wave = new PulseWave(amplitude, frequency, pulse_ratio);
 		break;
 
 	default:
-		throw invalid_argument("sndgen requires one of the following arguments is allowed: '--sin' '--triangle' '--sawtooth' '--pulse'");
+		throw invalid_argument("sndgen requires one of the following arguments is allowed: '--sine' '--triangle' '--sawtooth' '--pulse'");
 		break;
 	}
 
 	// generate the file and output
 	AudioFile file = ((iFunction *)wave)->generateAudioFile(sample_rate, time_duration, bit_res);
+	file = file * volume;
 
 	if (use_adsr) {
 		AdsrEnvelope adsr = AdsrEnvelope(a, d, s, r, time_duration);
@@ -210,12 +213,12 @@ void print_help() {
 	cout << "  -d <n>\tDecay time of <n> for input asdr envelope (must be greater than 0.0) (ignored if -a -d -s or -r are never set)." << endl;
 	cout << "  -s <n>\tSustain time of <n> for input asdr envelope (must be within range [0.0, 1.0]) (ignored if -a -d -s or -r are never set)." << endl;
 	cout << "  -r <n>\tRelease time of <n> for input asdr envelope (must be greater than 0.0) (ignored if -a -d -s or -r are never set)." << endl;
-	cout << "  --sin\tGenerate a sin wave." << endl;
+	cout << "  --sine\tGenerate a sine wave." << endl;
 	cout << "  --triangle\tGenerate a triangle wave." << endl;
 	cout << "  --pulse\tGenerate a pulse wave (requires --pf)." << endl;
 	cout << "  -p --pf=<n>\tFraction of the time the pulse wave is 'up', required for --pulse, ignored otherwise (must be within rage of [0.0, 1.0])." << endl;
 	cout << endl;
-	cout << "Produces a sound of the specified frequency and waveform, using a simple ADSR envelope." << endl;
+	cout << "Produces a sound of the specified frequency and waveform, usineg a simple ADSR envelope." << endl;
 }
 
 double get_double_from_string(string data) {

@@ -228,6 +228,14 @@ bool AudioFile::are_channels_valid() {
 	return true;
 }
 
+void AudioFile::mute_channel(unsigned index) {
+	Channel &c = channels[index];
+
+	for (auto i = 0; i < (int)c.size(); i++) {
+		c[i] = 0;
+	}
+}
+
 void AudioFile::make_valid() {
 	if (are_channels_valid()) {
 		return;

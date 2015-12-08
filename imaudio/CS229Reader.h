@@ -1,11 +1,10 @@
-#ifndef FORMAT_CS229_H
-#define FORMAT_CS229_H
+#ifndef CS229READER_H
+#define CS229READER_H
 
 #include <iostream>
 #include <fstream>
 #include <unordered_map>
 #include "iFileReader.h"
-#include "iFileWriter.h"
 #include "AudioFile.h"
 
 using namespace std;

@@ -101,6 +101,12 @@ bool CS229Reader::check_format(string line) {
 	string key;
 	stream >> key;
 
+	string extra;
+	stream >> extra;
+	if (extra.length() > 0 && extra[0] != '#') {
+		throw invalid_argument("Extra data found after format specifier");
+	}
+
 	return strcasecmp(key.c_str(), "CS229") == 0;
 }
 
@@ -126,7 +132,12 @@ bool CS229Reader::proc_header_line(string line) {
 
 	if (is_valid_header(key)) {
 		transform(key.begin(), key.end(), key.begin(), ::toupper);
-		header.insert({key, val});
+		try {
+			header.at(key);
+			throw invalid_argument("Data already found for header: " + key);
+		} catch (out_of_range e) {
+			header.insert({key, val});
+		}
 	} else {
 		throw invalid_argument(invalid_header_msg);
 	}

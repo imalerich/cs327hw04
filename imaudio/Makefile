@@ -1,7 +1,8 @@
 CFLAGS = -std=c++11 -Wall -g -c
 LFLAGS = -g -lm
-OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o SinWave.o TriangleWave.o SawToothWave.o PulseWave.o AdsrEnvelope.o flags.o
+OBJ = Channel.o AudioFile.o CS229Reader.o CS229Writer.o SinWave.o TriangleWave.o SawToothWave.o PulseWave.o AdsrEnvelope.o flags.o ABC229Reader.o
 FUNC = func/iWaveform.h func/iFunction.h
+BASE = AudioFile.h Channel.h
 
 imaudio.a: $(OBJ)
 	[ -d ../bin ] || mkdir ../lib
@@ -13,11 +14,14 @@ Channel.o: Channel.cpp Channel.h
 AudioFile.o: AudioFile.cpp AudioFile.h Channel.h
 	g++ $(CFLAGS) AudioFile.cpp
 
-CS229Reader.o: CS229Reader.cpp CS229Reader.h iFileReader.h
+CS229Reader.o: CS229Reader.cpp CS229Reader.h iFileReader.h $(BASE)
 	g++ $(CFLAGS) CS229Reader.cpp
 
-CS229Writer.o: CS229Writer.cpp CS229Writer.h iFileWriter.h
+CS229Writer.o: CS229Writer.cpp CS229Writer.h iFileWriter.h $(BASE)
 	g++ $(CFLAGS) CS229Writer.cpp
+
+ABC229Reader.o: ABC229Reader.cpp ABC229Reader.h iFileReader.h $(BASE)
+	g++ $(CFLAGS) ABC229Reader.cpp
 
 SinWave.o: func/SinWave.cpp func/SinWave.h $(FUNC)
 	g++ $(CFLAGS) func/SinWave.cpp
