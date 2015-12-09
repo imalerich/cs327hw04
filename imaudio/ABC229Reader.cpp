@@ -28,6 +28,7 @@ AudioFile ABC229Reader::readFile(istream &is, string filename) {
 		ret[i].append(channels[i]);
 	}
 
+	ret.make_valid();
 	return ret;
 }
 
@@ -92,9 +93,7 @@ bool ABC229Reader::ignore_line(string line) {
 }
 
 void ABC229Reader::read_instruments(istream &stream) {
-	while (get_instrument_header(stream)) {
-		// TODO add the channel data
-	}
+	while (get_instrument_header(stream)) { }
 }
 
 bool ABC229Reader::get_instrument_header(istream &stream) {
@@ -209,14 +208,23 @@ bool ABC229Reader::is_valid_note(string note) {
 	}
 
 	// check for a length value and remove it
-	if (note.back() >= '1' || note.back() <= '9') {
-		note = note.substr(0, note.size() - 1);
+	int length_chars = 0;
+	for (int i = note.length() - 1; i >= 0; i-- ) {
+		if ((note[i] >= '0' && note[i] <= '9') || note[i] == '.') {
+			length_chars++;
+		} else {
+			break;
+		}
+	}
+
+	if (length_chars > 0) {
+		note = note.substr(0, note.length() - length_chars);
 	}
 
 	auto up_octave_count = 0;
 	auto down_octave_count = 0;
 
-	for (auto i = 0; i < (int)note.size(); i++) {
+	for (auto i = 0; i < (int)note.length(); i++) {
 		if (note[i] == ',') {
 			down_octave_count++;
 		} else if (note[i] == '\'') {
@@ -242,26 +250,26 @@ bool ABC229Reader::is_valid_note(string note) {
 unsigned ABC229Reader::freq_for_note(string note) {
 	if (toupper(note[0]) == 'Z') return 0;
 
-	static const string keys[] = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
-	string note_str = "" + toupper(note[0]);
-	note_str = note[1] == '#' ? note_str + '#' : note_str;
+	string note_str;
+	note_str += toupper(note[0]);
+	if (note[1] == '#') note_str += '#';
 	unsigned freq = 440;
 
 	auto up_octave_count = 0;
 	auto down_octave_count = 0;
 
-	for (auto c : note_str) {
+	for (auto c : note) {
 		if (c == ',') { down_octave_count++; }
 		else if (c == '\'') { up_octave_count++; }
 	}
 
 	// modify the octave relative to the frequency
-	freq *= pow(2, up_octave_count);
-	freq /= pow(2, down_octave_count);
+	freq *= pow(2, up_octave_count - down_octave_count);
 
 	// get the 0 based index for the note
 	unsigned index;
-	for (index = 0; strcasecmp(keys[index].c_str(), note_str.c_str()) == 0; index++);
+	static const string keys[] = { "A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#" };
+	for (index = 0; strcasecmp(keys[index].c_str(), note_str.c_str()) != 0; index++);
 
 	// apply the offset from the root 'A'
 	double s = pow(2, 1.0/12);
@@ -270,13 +278,20 @@ unsigned ABC229Reader::freq_for_note(string note) {
 	return freq;
 }
 
-unsigned ABC229Reader::length_for_note(string note) {
-	char length = note.back();
-	if (length >= '1' && length <= '9') {
-		return length - '0';
+double ABC229Reader::length_for_note(string note) {
+	string length;
+	for (auto i = 0; i < (int)note.length(); i++ ) {
+		if ((note[i] >= '0' && note[i] <= '9') || note[i] == '.') {
+			length += note[i];
+		}
 	}
 
-	return 1;
+	if (!length.size()) {
+		return 1;
+	}
+	
+	double l = stod(length);
+	return l;
 }
 
 bool ABC229Reader::is_note_rest(string note) {
@@ -293,11 +308,13 @@ Channel ABC229Reader::get_channel_from_notes(vector<string> &notes) {
 	double sustain = get_tmp_value("Sustain", 1.0);
 	double release = get_tmp_value("Release", 0.0);
 	double pulsefrac = get_tmp_value("PulseFrac", 0.5);
+	double octave = get_tmp_value("Octave", 0.0);
 
 	AdsrEnvelope env = AdsrEnvelope(attack, decay, sustain, release, tempo / 60.0);
 
 	for (auto note : notes) {
 		double freq = freq_for_note(note);
+		freq *= pow(2, octave);
 		SinWave s = SinWave(amplitude, freq);
 		iWaveform * wave = NULL;
 
@@ -406,7 +423,7 @@ void ABC229Reader::get_key_and_val(string line, string &key, double &val) {
 }
 
 bool ABC229Reader::is_valid_header(string key) {
-	static const string keys[] = { "Waveform", "Volume", "Attack", "Decay", "Sustain", "Release", "PulseFrac" };
+	static const string keys[] = { "Waveform", "Volume", "Attack", "Decay", "Sustain", "Release", "PulseFrac", "Octave" };
 	for (auto KEY : keys) {
 		if (strcasecmp(KEY.c_str(), key.c_str()) == 0) {
 			return true;

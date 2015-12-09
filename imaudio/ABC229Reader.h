@@ -124,7 +124,7 @@ private:
 	 * \param note The note to check for length of.
 	 * \return The length of the note (relative to the Tempo).
 	 */
-	unsigned length_for_note(string note);
+	double length_for_note(string note);
 
 	/**
 	 * \param note The note to check as a rest.

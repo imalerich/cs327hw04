@@ -58,12 +58,13 @@ int main(int argc, char ** argv) {
 	}
 
 	unsigned extra_params = argc - optind;
-	if (optind >= argc || !bit_depth || !sample_rate || extra_params > 1) {
+	if (!bit_depth || !sample_rate || extra_params > 1) {
 		print_help();
 		return 1;
 	}
 
-	AudioFile output = ABC229Reader(sample_rate, bit_depth).readFile(string(argv[1]));
+	AudioFile output = extra_params ? ABC229Reader(sample_rate, bit_depth).readFile(string(argv[optind])) :
+		ABC229Reader(sample_rate, bit_depth).readFile(cin);
 
 	if (mute_index > -1) {
 		output.mute_channel(mute_index);
@@ -77,25 +78,31 @@ int main(int argc, char ** argv) {
 }
 
 long get_long_from_string(string data) {
-	size_t next_index;
-	auto val = stol(data, &next_index);
+	try {
+		size_t next_index;
+		auto val = stol(data, &next_index);
 
-	if (next_index != data.length() || !data.length()) {
+		if (next_index != data.length() || !data.length()) {
+			throw invalid_argument("");
+		}
+
+		return val;
+
+	} catch (exception e) {
 		throw invalid_argument("paremter does not contain a valid long");
 	}
-
-	return val;
 }
 
 void print_help() {
-	cout << "Usage: sndplay [options] file" << endl;
+	cout << "Usage: sndplay [options] [file]" << endl;
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
 	cout << "  -o --output=<file>\tOutput to <file> instead of the standard output" << endl;
 	cout << "  -w --wav\tInput files are in .wav format not .abc229" << endl;
 	cout << "  -s --sr\tSample Rate to use for the output .cs229" << endl;
-	cout << "  -b -- bits\t Bit Depth to use for the output .cs229" << endl;
+	cout << "  -b --bits\t Bit Depth to use for the output .cs229" << endl;
 	cout << "  -m --mute\tIndex of an Instrument to be muted in output .cs229" << endl;
 	cout << endl;
 	cout << "This program reads in a file of format .abc229 and converts it to the .cs229 format." << endl;
+	cout << "If there is no file specified for input, this program will read from the standard input." << endl;
 }
