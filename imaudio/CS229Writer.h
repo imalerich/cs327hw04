@@ -7,8 +7,8 @@ using namespace std;
 
 class CS229Writer : public iFileWriter {
 public:
-	void writeFile(AudioFile &file, string filename) { iFileWriter::writeFile(file, filename); }
-	virtual void writeFile(AudioFile &file, ostream &os);
+	void write_file(AudioFile &file, string filename) { iFileWriter::write_file(file, filename); }
+	virtual void write_file(AudioFile &file, ostream &os);
 
 private:
 };

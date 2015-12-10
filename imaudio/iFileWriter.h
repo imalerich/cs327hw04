@@ -28,11 +28,11 @@ public:
 	 * \param file Input file to write to a file.
 	 * \param filename Name of the file to write data to.
 	 */
-	void writeFile(AudioFile &file, string filename) {
-		// create the file, then redirect to writeFile
+	void write_file(AudioFile &file, string filename) {
+		// create the file, then redirect to write_file
 		ofstream output;
 		output.open(filename);
-		writeFile(file, output);
+		write_file(file, output);
 		output.close();
 	}
 
@@ -44,7 +44,7 @@ public:
 	 * \param file Input file to write to the output stream.
 	 * \param os Output stream to write data to.
 	 */
-	virtual void writeFile(AudioFile &file, ostream &os) = 0;
+	virtual void write_file(AudioFile &file, ostream &os) = 0;
 };
 
 #endif

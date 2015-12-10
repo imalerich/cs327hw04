@@ -8,9 +8,9 @@ public:
 	PulseWave(double Amplitude, double Frequency, double PulseRatio) : 
 		iWaveform(Amplitude, Frequency), pulse_ratio{PulseRatio} { }
 
-	virtual double sampleAtTime(double time);
+	virtual double sample_at_time(double time);
 
-	inline virtual string functionName() {
+	inline virtual string function_name() {
 		return "pulsewave";
 	}
 

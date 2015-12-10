@@ -180,7 +180,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// generate the file and output
-	AudioFile file = ((iFunction *)wave)->generateAudioFile(sample_rate, time_duration, bit_res);
+	AudioFile file = ((iFunction *)wave)->generate_audio_file(sample_rate, time_duration, bit_res);
 	file = file * volume;
 
 	if (use_adsr) {
@@ -189,9 +189,9 @@ int main(int argc, char ** argv) {
 	}
 
 	if (file_name) {
-		CS229Writer().writeFile(file, file_name);
+		CS229Writer().write_file(file, file_name);
 	} else {
-		CS229Writer().writeFile(file, cout);
+		CS229Writer().write_file(file, cout);
 	}
 	
 	// wave is only NULL if the default: exception is thrown
@@ -215,6 +215,7 @@ void print_help() {
 	cout << "  -r <n>\tRelease time of <n> for input asdr envelope (must be greater than 0.0) (ignored if -a -d -s or -r are never set)." << endl;
 	cout << "  --sine\tGenerate a sine wave." << endl;
 	cout << "  --triangle\tGenerate a triangle wave." << endl;
+	cout << "  --sawtooth\tGenerate a sawtooth wave." << endl;
 	cout << "  --pulse\tGenerate a pulse wave (requires --pf)." << endl;
 	cout << "  -p --pf=<n>\tFraction of the time the pulse wave is 'up', required for --pulse, ignored otherwise (must be within rage of [0.0, 1.0])." << endl;
 	cout << endl;

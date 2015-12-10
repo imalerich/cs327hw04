@@ -47,16 +47,16 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	auto output = CS229Reader().readFile(string(argv[optind])) * get_scalar(argv[optind + 1]);
+	auto output = CS229Reader().read_file(string(argv[optind])) * get_scalar(argv[optind + 1]);
 
 	for (auto i = optind + 2; i < argc; i+=2) {
-		output = output + (CS229Reader().readFile(string(argv[i])) * get_scalar(argv[i+1]));
+		output = output + (CS229Reader().read_file(string(argv[i])) * get_scalar(argv[i+1]));
 	}
 
 	if (file_name) {
-		CS229Writer().writeFile(output, file_name);
+		CS229Writer().write_file(output, file_name);
 	} else {
-		CS229Writer().writeFile(output, cout);
+		CS229Writer().write_file(output, cout);
 	}
 }
 

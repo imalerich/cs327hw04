@@ -49,17 +49,17 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	AudioFile output = CS229Reader().readFile(string(argv[optind]));
+	AudioFile output = CS229Reader().read_file(string(argv[optind]));
 
 	for (auto i = optind + 1; i < argc; i++) {
-		AudioFile add = CS229Reader().readFile(string(argv[i]));
+		AudioFile add = CS229Reader().read_file(string(argv[i]));
 		output = output.concat(add);
 	}
 
 	if (file_name) {
-		CS229Writer().writeFile(output, file_name);
+		CS229Writer().write_file(output, file_name);
 	} else {
-		CS229Writer().writeFile(output, cout);
+		CS229Writer().write_file(output, cout);
 	}
 }
 

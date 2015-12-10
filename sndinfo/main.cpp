@@ -25,9 +25,9 @@ int main(int argc, char ** argv) {
 	}
 
 	if (argc == 2) {
-		cout << CS229Reader().readFile(string(argv[1])) << endl;
+		cout << CS229Reader().read_file(string(argv[1])) << endl;
 	} else if (argc == 1) {
-		cout << CS229Reader().readFile(cin, "std::cin") << endl;
+		cout << CS229Reader().read_file(cin, "std::cin") << endl;
 	} else {
 		print_help();
 	}

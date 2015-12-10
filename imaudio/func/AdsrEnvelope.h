@@ -15,12 +15,12 @@ public:
 	 */
 	AdsrEnvelope(double Attack, double Decay, double Sustain, double Release, double Length);
 
-	virtual double sampleAtTime(double time);
+	virtual double sample_at_time(double time);
 
 	/**
 	 * \return The current length (in seconds) of this adsr envelope.
 	 */
-	inline double getLength() const {
+	inline double get_length() const {
 		return length;
 	}
 
@@ -30,17 +30,19 @@ public:
 	 * this method will have no affect.
 	 * \param Length New length.
 	 */
-	inline void setLength(double Length) {
+	inline void set_length(double Length) {
 		if (length > 0) {
 			length = Length;
 		}
 	}
 
-	inline virtual string functionName() {
+	inline virtual string function_name() {
 		return "asdrenvelope";
 	}
 
 private:
+	double sample_at_time_full(double time);
+
 	double a;
 	double d;
 	double s;

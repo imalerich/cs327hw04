@@ -22,31 +22,31 @@ public:
 	 * \param time Input time to grab a sample from.
 	 * \return The sample value at the given time.
 	 */
-	virtual double sampleAtTime(double time) = 0;
+	virtual double sample_at_time(double time) = 0;
 
 	/**
 	 * The name of this function to use for the generated audio file.
 	 */
-	virtual string functionName() = 0;
+	virtual string function_name() = 0;
 
 	/**
 	 * Generates a new audio file that represents a discrete
 	 * version of this function. The generated file will only
 	 * have one channel representing this function and will have
 	 * samples from time 0 to time length as given by
-	 * sampleAtTime(...) for parameter in increments of 1.0 / SampleRate.
+	 * sample_at_time(...) for parameter in increments of 1.0 / SampleRate.
 	 * \param SampleRate Number of samples per second to take of this function.
 	 * \param Length Length (in seconds) of the output AudioFile.
 	 * \param BitRes Bit resolution to use in the generated AudioFile.
 	 * \return Discrete AudioFile representing this function.
 	 */
-	AudioFile generateAudioFile(size_t SampleRate, double Length, size_t BitRes) {
-		AudioFile f = AudioFile(functionName(), "iFunction", SampleRate, BitRes, 1);
+	AudioFile generate_audio_file(size_t SampleRate, double Length, size_t BitRes) {
+		AudioFile f = AudioFile(function_name(), "iFunction", SampleRate, BitRes, 1);
 		auto sample_count = Length * SampleRate;
 
 		for (auto i = 0; i < sample_count; i++) {
 			auto time = i / (double)SampleRate;
-			f[0].push_sample(sampleAtTime(time));
+			f[0].push_sample(sample_at_time(time));
 		}
 
 		return f;
@@ -69,7 +69,7 @@ public:
 			// multiply each sample by the func at the given time
 			for (auto i = 0; i < (int)channel.size(); i++) {
 				auto time = i / (double)last.get_sample_rate();
-				channel[i] *= sampleAtTime(time);
+				channel[i] *= sample_at_time(time);
 			}
 		}
 

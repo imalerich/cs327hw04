@@ -7,7 +7,7 @@
  * Describes a function that follows a repeting
  * waveform with an 'amplitude' and a 'frequency'.
  * Subclasses of iWaveform shuld override the methods
- * of iFunction and return values for sampleAtTime(...)
+ * of iFunction and return values for sample_at_time(...)
  * based on this interfaces 'amplitude' and 'frequency'.
  */
 class iWaveform : public iFunction {

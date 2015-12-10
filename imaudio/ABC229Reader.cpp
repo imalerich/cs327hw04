@@ -11,7 +11,7 @@
 
 #include "ABC229Reader.h"
 
-AudioFile ABC229Reader::readFile(istream &is, string filename) {
+AudioFile ABC229Reader::read_file(istream &is, string filename) {
 	try {
 		check_header(is);
 		get_header_data(is);
@@ -310,8 +310,6 @@ Channel ABC229Reader::get_channel_from_notes(vector<string> &notes) {
 	double pulsefrac = get_tmp_value("PulseFrac", 0.5);
 	double octave = get_tmp_value("Octave", 0.0);
 
-	AdsrEnvelope env = AdsrEnvelope(attack, decay, sustain, release, tempo / 60.0);
-
 	for (auto note : notes) {
 		double freq = freq_for_note(note);
 		freq *= pow(2, octave);
@@ -333,12 +331,14 @@ Channel ABC229Reader::get_channel_from_notes(vector<string> &notes) {
 
 		// push the samples for this note
 		for (auto i = 0; i < (int)(sample_per_note * length_for_note(note)); i++) {
+			AdsrEnvelope env = AdsrEnvelope(attack, decay, sustain, release, length_for_note(note) * (tempo / 60.0));
+
 			if (is_note_rest(note)) {
 				ret.push_sample(0);
 			} else {
 				double time = i / (double)sample_rate;
-				double adsr = env.sampleAtTime(time);
-				double sample = wave->sampleAtTime(time);
+				double adsr = env.sample_at_time(time);
+				double sample = wave->sample_at_time(time);
 				ret.push_sample(volume * sample * adsr);
 			}
 		}

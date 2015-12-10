@@ -19,8 +19,8 @@ class CS229Reader : public iFileReader {
 public:
 	CS229Reader() : current_line{0} { }
 
-	AudioFile readFile(string filename) { return iFileReader::readFile(filename); }
-	virtual AudioFile readFile(istream &is, string filename = "std::cin");
+	AudioFile read_file(string filename) { return iFileReader::read_file(filename); }
+	virtual AudioFile read_file(istream &is, string filename = "std::cin");
 
 private:
 	/**

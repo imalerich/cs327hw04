@@ -27,13 +27,13 @@ public:
 	 * \param filename Input filename to read an AudioFile from.
 	 * \return AudioFile The AudioFile as parsed from the input file.
 	 */
-	AudioFile readFile(string filename) {
+	AudioFile read_file(string filename) {
 		ifstream file(filename);
 		if (!file.is_open()) {
 			throw invalid_argument(file_read_msg);
 		}
 	
-		AudioFile ret = readFile(file, filename);
+		AudioFile ret = read_file(file, filename);
 		file.close();
 		return ret;
 	}
@@ -46,7 +46,7 @@ public:
 	 * \param filename The name of the file we are reading from ("std::cin" by default).
 	 * \return AudioFile The AudioFile as parsed from the input stream.
 	 */
-	virtual AudioFile readFile(istream &is, string filename = "std::cin") = 0;
+	virtual AudioFile read_file(istream &is, string filename = "std::cin") = 0;
 };
 
 #endif

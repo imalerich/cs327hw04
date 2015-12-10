@@ -63,17 +63,17 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
-	AudioFile output = extra_params ? ABC229Reader(sample_rate, bit_depth).readFile(string(argv[optind])) :
-		ABC229Reader(sample_rate, bit_depth).readFile(cin);
+	AudioFile output = extra_params ? ABC229Reader(sample_rate, bit_depth).read_file(string(argv[optind])) :
+		ABC229Reader(sample_rate, bit_depth).read_file(cin);
 
 	if (mute_index > -1) {
 		output.mute_channel(mute_index);
 	}
 
 	if (file_name) {
-		CS229Writer().writeFile(output, file_name);
+		CS229Writer().write_file(output, file_name);
 	} else {
-		CS229Writer().writeFile(output, cout);
+		CS229Writer().write_file(output, cout);
 	}
 }
 

@@ -3,7 +3,7 @@
 
 #include "CS229Writer.h"
 
-void CS229Writer::writeFile(AudioFile &file, ostream &os) {
+void CS229Writer::write_file(AudioFile &file, ostream &os) {
 	// print out the header
 	os << "CS229" << endl;
 	os << endl;
