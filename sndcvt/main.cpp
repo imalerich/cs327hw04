@@ -54,7 +54,7 @@ int main(int argc, char ** argv) {
 		AudioFile file = extra_params ? CS229Reader().read_file(string(argv[optind])) :
 			CS229Reader().read_file(TMP_FILE);
 		WavWriter writer = WavWriter();
-		output_file(&writer, file, file_name); //remove_tmp_file();
+		output_file(&writer, file, file_name);
 		remove_tmp_file();
 		return 0;
 	} catch (exception e) { }

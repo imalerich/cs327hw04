@@ -33,6 +33,8 @@ sndplay/
 	can modify the octave of every note the instrument plays, and
 	(more importantly) included support for floating point values
 	for note length.
+	If you would like to test these modifications, my test files 
+	can be found at http://github.com/imalerich/hw04_test_files/
 
 sndcvt/
 
