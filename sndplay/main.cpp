@@ -1,5 +1,6 @@
 #include <ABC229Reader.h>
 #include <CS229Writer.h>
+#include <WavWriter.h>
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -11,6 +12,7 @@ using namespace std;
 void print_help();
 long get_long_from_string(string data);
 
+static int output_wav = 0;
 static size_t bit_depth = 0;
 static size_t sample_rate = 0;
 static int mute_index = -1;
@@ -19,7 +21,7 @@ int main(int argc, char ** argv) {
 	static struct option long_options[] = {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
-		{ "wav", 0, 0, 'w' },
+		{ "wav", 0, &output_wav, 1 },
 		{ "bits", required_argument, 0, 'b' },
 		{ "sr", required_argument, 0, 's' },
 		{ "mute", required_argument, 0, 'm' },
@@ -34,10 +36,6 @@ int main(int argc, char ** argv) {
 		case 'o':
 			file_name = optarg;
 			break;
-
-		case 'w':
-			cout << "wav files currently not supported" << endl;
-			return 0;
 
 		case 'b':
 			bit_depth = (size_t)get_long_from_string(string(optarg));
@@ -70,11 +68,20 @@ int main(int argc, char ** argv) {
 		output.mute_channel(mute_index);
 	}
 
-	if (file_name) {
-		CS229Writer().write_file(output, file_name);
+	iFileWriter * writer = nullptr;
+	if (output_wav == 0) {
+		writer = new WavWriter();
 	} else {
-		CS229Writer().write_file(output, cout);
+		writer = new CS229Writer();
 	}
+
+	if (file_name) {
+		writer->write_file(output, file_name);
+	} else {
+		writer->write_file(output, cout);
+	}
+
+	delete writer;
 }
 
 long get_long_from_string(string data) {
@@ -98,7 +105,7 @@ void print_help() {
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
 	cout << "  -o --output=<file>\tOutput to <file> instead of the standard output" << endl;
-	cout << "  -w --wav\tInput files are in .wav format not .abc229" << endl;
+	cout << "  -w --wav\tOutput the file in .wav format and not .cs229" << endl;
 	cout << "  -s --sr\tSample Rate to use for the output .cs229" << endl;
 	cout << "  -b --bits\t Bit Depth to use for the output .cs229" << endl;
 	cout << "  -m --mute\tIndex of an Instrument to be muted in output .cs229" << endl;

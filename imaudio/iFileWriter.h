@@ -20,6 +20,8 @@ static const string file_write_msg = "Failed to open file for writing.";
  */
 class iFileWriter {
 public:
+	virtual ~iFileWriter() { }
+	
 	/**
 	 * This method formats the data of the input file in the file
 	 * format represented by this interfaces subclasses.

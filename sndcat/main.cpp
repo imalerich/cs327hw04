@@ -6,17 +6,20 @@
 
 #include <CS229Reader.h>
 #include <CS229Writer.h>
+#include <WavWriter.h>
 #include <AudioFile.h>
 #include <flags.h>
 
 using namespace std;
 void print_help();
 
+static int output_wav = 0;
+
 int main(int argc, char ** argv) {
 	static struct option long_options[] = {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
-		{ "wav", 0, 0, 'w' },
+		{ "wav", 0, &output_wav, 1 },
 		{ "nonstrict", 0, 0, 'n' },
 		{ 0, 0, 0, 0 }
 	};
@@ -33,10 +36,6 @@ int main(int argc, char ** argv) {
 		case 'n':
 			strict_data = false;
 			break;
-
-		case 'w':
-			cout << "wav files currently not supported" << endl;
-			return 0;
 
 		case 'h':
 			print_help();
@@ -56,11 +55,20 @@ int main(int argc, char ** argv) {
 		output = output.concat(add);
 	}
 
-	if (file_name) {
-		CS229Writer().write_file(output, file_name);
+	iFileWriter * writer = nullptr;
+	if (output_wav == 0) {
+		writer = new WavWriter();
 	} else {
-		CS229Writer().write_file(output, cout);
+		writer = new CS229Writer();
 	}
+
+	if (file_name) {
+		writer->write_file(output, file_name);
+	} else {
+		writer->write_file(output, cout);
+	}
+
+	delete writer;
 }
 
 void print_help() {
@@ -68,7 +76,7 @@ void print_help() {
 	cout << "Options:" << endl;
 	cout << "  -h --help\tDisplay this information" << endl;
 	cout << "  -o --output=<file>\tOutput to <file> instead of the standard output" << endl;
-	cout << "  -w --wav\tInput files are in .wav format not .cs229" << endl;
+	cout << "  -w --wav\tOutput filees to the .wav format instead of .cs229" << endl;
 	cout << "  -n --nonstrict\tFile combinations will be much more lenient." << endl;
 	cout << endl;
 	cout << "This program reads all sound files passed as arguments, and writes a single sound file that is" << endl;

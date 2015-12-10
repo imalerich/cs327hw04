@@ -17,6 +17,7 @@
 class iFunction {
 public:
 	virtual ~iFunction() { }
+
 	/**
 	 * Returns the output of this function at the given input time.
 	 * \param time Input time to grab a sample from.

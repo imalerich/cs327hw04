@@ -20,6 +20,8 @@ static const string file_read_msg = "Failed to open file for reading.";
  */
 class iFileReader {
 public:
+	virtual ~iFileReader() { }
+	
 	/**
 	 * This method reads data from the input file in the file format defined
 	 * by the subclass. Using that data, a new AudioFile is created, and then
