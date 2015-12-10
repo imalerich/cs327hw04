@@ -10,13 +10,11 @@ Homework 4 for Computer Science 327 Fall 2015.
 imaudio/
     Shared code between all projects.
 
-sndinfo/
-
-    Sound info generation project.
+sndinfo/ Sound info generation project.
 
 sndcat/
 
-    Sound contatination project.
+    Sound concatination project.
 
 sndmix/
 
@@ -25,6 +23,24 @@ sndmix/
 sndgen/
 
     Sound generator project.
+
+sndplay/
+
+	Sound play project.
+	In order to play the Star Wars theme (among others),
+	I have added a few additional modifications to this project.
+	First I added an option for Instruments titled 'Octave' which
+	can modify the octave of every note the instrument plays, and
+	(more importantly) included support for floating point values
+	for note length.
+
+sndcvt/
+
+	Sound convert project.
+	On top of the required specifiction, if this program 
+	receives a .abc229 file as the input, it will read the file
+	with a sample rate of 48000 and a bit depth of 32. It will
+	then output the file in the wave format.
 
 bin/
 
@@ -65,7 +81,7 @@ implemented for all major class that store large ammounts of
 data, if unfamiliar these allow classes to be efficiently moved
 between references without having to resort to pointers to 
 move the larger data (in essence, pointers are copied to new
-objects, then set to NULL from the source reference).
+objects, then set to nullptr from the source reference).
 These ideas combined with the use of references means this
 project uses very few points, however it should behave very
 efficiently with its memory usage.
@@ -76,6 +92,15 @@ submitted will have a 'docs' directory when extracted.
 To browse the documentation for all the classes simply open
 the ./docs/html/index.html in your browser. I hope this 
 aids in a quick grading process.
+
+Lastly I have designed the program to throw an exception 
+whenever it comes across an error, most programs do not
+handle this exception, and so if you feed a program a bad file
+it crash, but will include a small description as to what sort
+of error occured that caused the crash. The sndcvt project takes
+advantage of this exception handling to test the reading of
+different file formats, and so provides a good example of
+how this methodology is useful.
 
 # Install
 -------------------------------------------------------------

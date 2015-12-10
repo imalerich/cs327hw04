@@ -21,7 +21,7 @@ int main(int argc, char ** argv) {
 	static struct option long_options[] = {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
-		{ "wav", 0, &output_wav, 1 },
+		{ "wav", no_argument, 0, 'w' },
 		{ "bits", required_argument, 0, 'b' },
 		{ "sr", required_argument, 0, 's' },
 		{ "mute", required_argument, 0, 'm' },
@@ -31,7 +31,7 @@ int main(int argc, char ** argv) {
 	char c = 0;
 	int option_index = 0;
 	const char * file_name = NULL;
-	while ((c = getopt_long(argc, argv, "ho:wb:s:m:012", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "hwo:b:s:m:012", long_options, &option_index)) != -1) {
 		switch (c) {
 		case 'o':
 			file_name = optarg;
@@ -39,6 +39,10 @@ int main(int argc, char ** argv) {
 
 		case 'b':
 			bit_depth = (size_t)get_long_from_string(string(optarg));
+			break;
+
+		case 'w':
+			output_wav = 1;
 			break;
 
 		case 's':
@@ -69,7 +73,7 @@ int main(int argc, char ** argv) {
 	}
 
 	iFileWriter * writer = nullptr;
-	if (output_wav == 0) {
+	if (output_wav == 1) {
 		writer = new WavWriter();
 	} else {
 		writer = new CS229Writer();

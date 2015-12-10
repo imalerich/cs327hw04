@@ -6,6 +6,7 @@
 #include <getopt.h>
 
 using namespace std;
+
 void print_help();
 
 int main(int argc, char ** argv) {

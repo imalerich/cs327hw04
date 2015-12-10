@@ -18,10 +18,8 @@ AudioFile CS229Reader::read_file(istream &is, string filename) {
 		check_header(is);
 		get_header_data(is);
 	} catch (exception e) {
-		// intercept the exception for a second to print the line number
-		cerr << filename << " : exception occured at line : " << current_line << endl;
-		// forward the exception we found
-		throw;
+		// forward the exception we found, but add some additional information
+		throw invalid_argument(filename + " : exception occured at line : " + "\n\twith exception: "+ e.what());
 	}
 
 	try {

@@ -130,6 +130,8 @@ AudioFile AudioFile::operator*(const double scalar) {
 		last[i] = last[i] * scalar;
 	}
 
+	last.make_valid();
+
 	return last;
 }
 
@@ -170,6 +172,9 @@ AudioFile AudioFile::operator+(const AudioFile &other) {
 		// will automatically increase channel size if necessary
 		last[i] = last[i] + smaller.get_channel(i);
 	}
+
+
+	last.make_valid();
 
 	return last;
 }

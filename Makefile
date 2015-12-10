@@ -1,5 +1,5 @@
 .PHONY: all
-all: imaudio sndinfo sndcat sndmix sndgen sndplay
+all: imaudio sndinfo sndcat sndmix sndgen sndplay sndcvt
 
 .PHONY: imaudio
 imaudio:
@@ -25,6 +25,10 @@ sndgen: imaudio
 sndplay: imaudio
 	make -C ./sndplay/ -j4
 
+.PHONY: sndcvt
+sndcvt: imaudio
+	make -C ./sndcvt/ -j4
+
 .PHONY: docs
 docs:
 	rm -rf docs/
@@ -32,11 +36,11 @@ docs:
 
 .PHONY: zip
 zip: clean docs
-	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndplay/ docs/
+	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndplay/ sndcvt/ docs/
 
 .PHONY: zip-nodoc
 zip-nodoc: clean
-	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndplay/
+	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndcvt/ sndplay/
 
 .PHONY: install
 install: all
@@ -49,6 +53,7 @@ uinstall:
 	sudo rm -rf /usr/bin/sndmix
 	sudo rm -rf /usr/bin/sndgen
 	sudo rm -rf /usr/bin/sndplay
+	sudo rm -rf /usr/bin/sndcvt
 
 .PHONY: clean
 clean:
@@ -58,6 +63,7 @@ clean:
 	make -C ./sndmix/ clean
 	make -C ./sndgen/ clean
 	make -C ./sndplay/ clean
+	make -C ./sndcvt/ clean
 	rm -rf bin/
 	rm -rf lib/
 	rm -rf docs/

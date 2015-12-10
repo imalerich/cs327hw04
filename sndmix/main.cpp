@@ -21,7 +21,7 @@ int main(int argc, char ** argv) {
 	static struct option long_options[] = {
 		{ "help", 0, 0, 'h' },
 		{ "output", required_argument, 0, 'o' },
-		{ "wav", 0, &output_wav, 1 },
+		{ "wav", 0, 0, 'w' },
 		{ "nonstrict", 0, 0, 'n' },
 		{ 0, 0, 0, 0 }
 	};
@@ -29,10 +29,14 @@ int main(int argc, char ** argv) {
 	char c = 0;
 	int option_index = 0;
 	const char * file_name = NULL;
-	while ((c = getopt_long(argc, argv, "ho:n012", long_options, &option_index)) != -1) {
+	while ((c = getopt_long(argc, argv, "hwo:n012", long_options, &option_index)) != -1) {
 		switch (c) {
 		case 'o':
 			file_name = optarg;
+			break;
+
+		case 'w':
+			output_wav = 1;
 			break;
 
 		case 'n':
@@ -58,7 +62,7 @@ int main(int argc, char ** argv) {
 	}
 
 	iFileWriter * writer = nullptr;
-	if (output_wav == 0) {
+	if (output_wav == 1) {
 		writer = new WavWriter();
 	} else {
 		writer = new CS229Writer();

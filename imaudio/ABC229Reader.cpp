@@ -12,16 +12,9 @@
 #include "ABC229Reader.h"
 
 AudioFile ABC229Reader::read_file(istream &is, string filename) {
-	try {
-		check_header(is);
-		get_header_data(is);
-		read_instruments(is);
-	} catch (exception e) {
-		// intercept the exception so we can print the line number
-		cerr << filename << endl;
-		// forward the exception we found
-		throw;
-	}
+	check_header(is);
+	get_header_data(is);
+	read_instruments(is);
 	
 	AudioFile ret = AudioFile(filename, ".abc229", sample_rate, bit_res, channels.size());
 	for (auto i = 0; i < (int)channels.size(); i++) {
