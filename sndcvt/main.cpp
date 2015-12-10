@@ -4,6 +4,7 @@
 #include <CS229Writer.h>
 #include <WavWriter.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +12,10 @@
 
 using namespace std;
 
+#define TMP_FILE ".cin"
+
+void create_tmp_file();
+void remove_tmp_file();
 void output_file(iFileWriter * writer, AudioFile &file, const char * file_name);
 void print_help();
 
@@ -30,8 +35,7 @@ int main(int argc, char ** argv) {
 			file_name = optarg;
 			break;
 
-		case 'h':
-			print_help();
+		case 'h': print_help();
 			return 0; }
 	}
 
@@ -42,34 +46,54 @@ int main(int argc, char ** argv) {
 		return 1;
 	}
 
+	if (extra_params == 0) {
+		create_tmp_file();
+	}
+
 	try {
 		AudioFile file = extra_params ? CS229Reader().read_file(string(argv[optind])) :
-			CS229Reader().read_file(cin);
+			CS229Reader().read_file(TMP_FILE);
 		WavWriter writer = WavWriter();
-		output_file(&writer, file, file_name);
+		output_file(&writer, file, file_name); //remove_tmp_file();
+		remove_tmp_file();
 		return 0;
 	} catch (exception e) { }
 
 	// if that fails try to read it as a .wav
 	try {
 		AudioFile file = extra_params ? WavReader().read_file(string(argv[optind])) :
-			WavReader().read_file(cin);
+			WavReader().read_file(TMP_FILE);
 		CS229Writer writer = CS229Writer();
 		output_file(&writer, file, file_name);
+		remove_tmp_file();
 		return 0;
 	} catch (exception e) { }
 
 	try {
 		AudioFile file = extra_params ? ABC229Reader(48000, 32).read_file(string(argv[optind])) :
-			ABC229Reader(48000, 32).read_file(cin);
+			ABC229Reader(48000, 32).read_file(TMP_FILE);
 		cerr << "Input file was of type .abc229, using a sample rate of 48000 and bit depth of 32." << endl;
 		WavWriter writer = WavWriter();
 		output_file(&writer, file, file_name);
+		remove_tmp_file();
 		return 0;
 	} catch (exception e) { }
 
 	// if that also fails print an error
 	cerr << "error: Failed to read the input file." << endl;
+}
+
+void create_tmp_file() {
+	// read all of the input into a file (as we will need to use it more than once)
+	string line;
+	ofstream output;
+	output.open(TMP_FILE);
+	while (getline(cin, line)) { output << line << endl; }
+	output.close();
+}
+
+void remove_tmp_file() {
+	remove(TMP_FILE);
 }
 
 void output_file(iFileWriter * writer, AudioFile &file, const char * file_name) {
