@@ -36,11 +36,11 @@ docs:
 
 .PHONY: zip
 zip: clean docs
-	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndplay/ sndcvt/ docs/
+	zip immhw04 -r .Doxyfile ClassDiagram.png imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndplay/ sndcvt/ docs/
 
 .PHONY: zip-nodoc
 zip-nodoc: clean
-	zip immhw04 -r .Doxyfile imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndcvt/ sndplay/
+	zip immhw04 -r .Doxyfile ClassDiagram.png imaudio Makefile README.md sndcat/ sndgen/ sndinfo/ sndmix/ sndcvt/ sndplay/
 
 .PHONY: install
 install: all
